@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Slotix — GCC Co-Workspace Booking</title>
+  <meta name="description" content="Automatically book GCC Greater Chennai Corporation co-workspace study centre slots with instant UPI QR payment." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: rgba(255, 255, 255, 0.04);
+      --surface-hover: rgba(255, 255, 255, 0.07);
+      --border: rgba(212, 168, 67, 0.12);
+      --border-bright: rgba(212, 168, 67, 0.35);
+      --gold: #d4a843;
+      --gold-light: #f0c96a;
+      --gold-dark: #a07e2e;
+      --text: #e8e4dc;
+      --text-dim: #7a7672;
+      --green: #3ecf8e;
+      --red: #ef4444;
+      --blue: #60a5fa;
+      --radius: 18px;
+      --radius-sm: 12px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Mono', monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ─── Background layers ─────────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(212, 168, 67, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(212, 168, 67, 0.025) 1px, transparent 1px);
+      background-size: 64px 64px;
+      pointer-events: none; z-index: 0;
+    }
+
+    .glow-top {
+      position: fixed; top: -300px; left: 50%; transform: translateX(-50%);
+      width: 800px; height: 600px;
+      background: radial-gradient(ellipse, rgba(212,168,67,0.07) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+
+    .glow-bottom {
+      position: fixed; bottom: -400px; left: 50%; transform: translateX(-50%);
+      width: 900px; height: 600px;
+      background: radial-gradient(ellipse, rgba(212,168,67,0.04) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ─── Layout ─────────────────────────────────────────────────── */
+    .container {
+      position: relative; z-index: 1;
+      max-width: 600px; margin: 0 auto;
+      padding: 48px 20px 80px;
+    }
+
+    /* ─── Header ─────────────────────────────────────────────────── */
+    .header { text-align: center; margin-bottom: 40px; }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 16px;
+      background: rgba(212, 168, 67, 0.08);
+      border: 1px solid rgba(212, 168, 67, 0.2);
+      border-radius: 40px;
+      font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 20px;
+    }
+
+    .badge-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--gold);
+      animation: pulse-dot 2s ease infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(212,168,67,0.4); }
+      50%      { opacity: 0.6; box-shadow: 0 0 0 6px rgba(212,168,67,0); }
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 52px;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text; letter-spacing: -2px;
+      margin-bottom: 12px;
+    }
+
+    .tagline {
+      color: var(--text-dim); font-size: 12px;
+      max-width: 360px; margin: 0 auto; line-height: 1.8;
+    }
+
+    /* ─── Cards ───────────────────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      margin-bottom: 16px;
+      transition: border-color 0.3s;
+    }
+
+    .card:hover { border-color: var(--border-bright); }
+
+    .card-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 13px;
+      color: var(--gold); letter-spacing: 2px;
+      text-transform: uppercase; margin-bottom: 20px;
+    }
+
+    /* ─── Form Elements ───────────────────────────────────────────── */
+    .field { margin-bottom: 20px; }
+    .field:last-child { margin-bottom: 0; }
+
+    .field-label {
+      display: block; font-size: 10px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--text-dim);
+      margin-bottom: 8px; font-weight: 500;
+    }
+
+    .field-input {
+      width: 100%; padding: 14px 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'DM Mono', monospace; font-size: 13px;
+      outline: none; transition: border-color 0.25s, box-shadow 0.25s;
+    }
+
+    .field-input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(212,168,67,0.08);
+    }
+
+    select.field-input {
+      appearance: none; cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23d4a843' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center;
+      padding-right: 36px;
+    }
+
+    select.field-input option { background: #16161e; color: var(--text); }
+
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    /* ─── Slot selector ───────────────────────────────────────────── */
+    .slots-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+
+    .slot-btn {
+      flex: 1 1 calc(50% - 10px); min-width: 130px;
+      padding: 14px 10px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-dim);
+      font-family: 'DM Mono', monospace; font-size: 11px;
+      cursor: pointer; text-align: center;
+      transition: all 0.25s; user-select: none;
+      position: relative;
+    }
+
+    .slot-btn:hover { border-color: var(--gold); color: var(--text); }
+
+    .slot-btn.active {
+      background: rgba(212,168,67,0.08);
+      border-color: var(--gold);
+      color: var(--gold-light);
+      box-shadow: 0 0 20px rgba(212,168,67,0.1);
+    }
+
+    .slot-btn.active::after {
+      content: '✓'; position: absolute; top: 6px; right: 10px;
+      font-size: 12px; color: var(--gold-light);
+    }
+
+    .slot-num { font-weight: 500; font-size: 13px; display: block; margin-bottom: 2px; }
+
+    /* ─── Book button ─────────────────────────────────────────────── */
+    .book-btn {
+      width: 100%; padding: 16px; margin-top: 4px;
+      border: none; border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
+      color: #0a0a0f;
+      font-family: 'Syne', sans-serif; font-weight: 700;
+      font-size: 15px; letter-spacing: 1px;
+      cursor: pointer; text-transform: uppercase;
+      transition: transform 0.2s, box-shadow 0.3s, opacity 0.3s;
+    }
+
+    .book-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(212,168,67,0.25);
+    }
+
+    .book-btn:active:not(:disabled) { transform: translateY(0); }
+    .book-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .status-msg {
+      text-align: center; margin-top: 14px;
+      font-size: 12px; color: var(--text-dim); min-height: 18px;
+    }
+    .status-msg.error { color: var(--red); }
+
+    /* ─── Results ─────────────────────────────────────────────────── */
+    #results { display: none; }
+
+    .results-header {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700; font-size: 20px;
+      color: var(--gold-light); text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .qr-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+
+    .qr-card {
+      background: var(--surface);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden; transition: border-color 0.3s;
+    }
+
+    .qr-card-head {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .qr-card-slot {
+      font-family: 'Syne', sans-serif;
+      font-weight: 600; font-size: 14px; color: var(--text);
+    }
+
+    .qr-card-body { padding: 24px 20px; text-align: center; }
+
+    .qr-card.paid { border-color: rgba(62,207,142,0.4); }
+    .qr-card.error-state { border-color: rgba(239,68,68,0.4); }
+
+    /* ─── Badges ──────────────────────────────────────────────────── */
+    .status-badge {
+      display: inline-block; padding: 3px 10px;
+      border-radius: 20px; font-size: 9px;
+      letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500;
+    }
+
+    .sb-pending   { background: rgba(96,165,250,0.1); color: var(--blue); border: 1px solid rgba(96,165,250,0.2); }
+    .sb-awaiting  { background: rgba(212,168,67,0.1); color: var(--gold-light); border: 1px solid rgba(212,168,67,0.25); }
+    .sb-paid      { background: rgba(62,207,142,0.1); color: var(--green); border: 1px solid rgba(62,207,142,0.25); }
+    .sb-error     { background: rgba(239,68,68,0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.25); }
+
+    /* ─── Spinner ─────────────────────────────────────────────────── */
+    .spinner {
+      width: 32px; height: 32px; margin: 12px auto;
+      border: 3px solid var(--border); border-top-color: var(--gold);
+      border-radius: 50%; animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .spin-text { color: var(--text-dim); font-size: 11px; margin-top: 8px; }
+
+    /* ─── QR display ──────────────────────────────────────────────── */
+    .qr-img {
+      width: 160px; height: 160px; border-radius: 10px;
+      margin: 8px auto; display: block;
+      border: 2px solid var(--border-bright);
+      background: #fff;
+    }
+
+    .qr-amount {
+      font-family: 'Syne', sans-serif;
+      font-size: 24px; font-weight: 700;
+      color: var(--gold-light); margin: 10px 0 2px;
+    }
+
+    .qr-time {
+      color: var(--text-dim); font-size: 11px; margin-bottom: 6px;
+    }
+
+    .qr-hint { color: var(--text-dim); font-size: 10px; letter-spacing: 1px; }
+
+    /* ─── Paid animation ──────────────────────────────────────────── */
+    .check-circle {
+      width: 56px; height: 56px; margin: 8px auto 12px;
+      border-radius: 50%; background: rgba(62,207,142,0.12);
+      border: 2px solid var(--green);
+      display: flex; align-items: center; justify-content: center;
+      animation: pop-in 0.4s ease;
+    }
+
+    .check-circle svg {
+      width: 28px; height: 28px; stroke: var(--green);
+      stroke-width: 3; fill: none;
+      stroke-dasharray: 40; stroke-dashoffset: 40;
+      animation: draw-check 0.5s 0.2s ease forwards;
+    }
+
+    @keyframes pop-in {
+      0% { transform: scale(0); } 60% { transform: scale(1.15); } 100% { transform: scale(1); }
+    }
+
+    @keyframes draw-check {
+      to { stroke-dashoffset: 0; }
+    }
+
+    .paid-label { color: var(--green); font-weight: 600; font-size: 13px; }
+
+    /* ─── Error display ───────────────────────────────────────────── */
+    .error-icon { font-size: 36px; margin: 8px 0; }
+    .error-label { color: var(--red); font-size: 12px; margin-top: 4px; word-break: break-word; }
+
+    /* ─── Awaiting pulse ──────────────────────────────────────────── */
+    @keyframes pulse-border {
+      0%, 100% { border-color: var(--border-bright); }
+      50%      { border-color: var(--gold); }
+    }
+    .qr-card.awaiting { animation: pulse-border 2.5s ease infinite; }
+
+    /* ─── New booking btn ─────────────────────────────────────────── */
+    .new-btn {
+      display: block; margin: 28px auto 0;
+      padding: 12px 36px;
+      background: transparent;
+      border: 1px solid var(--border-bright);
+      border-radius: var(--radius-sm);
+      color: var(--gold);
+      font-family: 'DM Mono', monospace; font-size: 12px;
+      cursor: pointer; transition: all 0.25s;
+    }
+
+    .new-btn:hover {
+      background: rgba(212,168,67,0.06);
+      border-color: var(--gold);
+    }
+
+    /* ─── Fade in ─────────────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.5s ease forwards; }
+
+    /* ─── Responsive ──────────────────────────────────────────────── */
+    @media (max-width: 480px) {
+      .row { grid-template-columns: 1fr; }
+      .logo { font-size: 40px; }
+      .container { padding: 32px 16px 60px; }
+      .card { padding: 22px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-top"></div>
+  <div class="glow-bottom"></div>
+
+  <div class="container">
+
+    <!-- ─── Header ────────────────────────────────────────────────── -->
+    <div class="header">
+      <div class="badge"><span class="badge-dot"></span>GCC Co-Workspace · Automated</div>
+      <div class="logo">Slotix</div>
+      <div class="tagline">Book multiple study centre slots simultaneously.<br/>Scan QR · Pay · Done.</div>
+    </div>
+
+    <!-- ─── Form ──────────────────────────────────────────────────── -->
+    <div id="form-section">
+
+      <!-- Card 1: Location & Date -->
+      <div class="card fade-up">
+        <div class="card-title">Location & Date</div>
+        <div class="field">
+          <label class="field-label" for="location">Centre</label>
+          <select class="field-input" id="location">
+            <option value="">Loading locations…</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label" for="date">Date</label>
+          <input type="date" class="field-input" id="date" />
+        </div>
+      </div>
+
+      <!-- Card 2: Slots -->
+      <div class="card fade-up" style="animation-delay: 0.08s">
+        <div class="card-title">Select Slots</div>
+        <div class="slots-grid" id="slots-grid">
+          <button class="slot-btn" data-slot="1" type="button"><span class="slot-num">Slot 01</span>06:00 AM – 09:30 AM</button>
+          <button class="slot-btn" data-slot="2" type="button"><span class="slot-num">Slot 02</span>10:00 AM – 01:30 PM</button>
+          <button class="slot-btn" data-slot="3" type="button"><span class="slot-num">Slot 03</span>02:00 PM – 05:30 PM</button>
+          <button class="slot-btn" data-slot="4" type="button"><span class="slot-num">Slot 04</span>06:00 PM – 09:30 PM</button>
+          <button class="slot-btn" data-slot="5" type="button"><span class="slot-num">Slot 05</span>10:00 PM – 11:00 PM</button>
+        </div>
+      </div>
+
+      <!-- Card 3: Details -->
+      <div class="card fade-up" style="animation-delay: 0.16s">
+        <div class="card-title">Booking Details</div>
+        <div class="row">
+          <div class="field">
+            <label class="field-label" for="name">Name</label>
+            <input type="text" class="field-input" id="name" value="Shriram" />
+          </div>
+          <div class="field">
+            <label class="field-label" for="phone">Mobile</label>
+            <input type="tel" class="field-input" id="phone" value="8825743347" maxlength="10" />
+          </div>
+        </div>
+        <div class="field" style="margin-top: 16px;">
+          <label class="field-label" for="seats">Seats</label>
+          <select class="field-input" id="seats">
+            <option value="1">1 seat — ₹5</option>
+            <option value="2" selected>2 seats — ₹10</option>
+            <option value="3">3 seats — ₹15</option>
+            <option value="4">4 seats — ₹20</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Book Button -->
+      <div class="card fade-up" style="animation-delay: 0.24s; padding: 20px 24px;">
+        <button class="book-btn" id="book-btn" type="button">⚡ Book Now</button>
+        <div class="status-msg" id="status-msg"></div>
+      </div>
+
+    </div>
+
+    <!-- ─── Results ───────────────────────────────────────────────── -->
+    <div id="results">
+      <div class="results-header" id="results-header">⚡ Booking in Progress</div>
+      <div class="qr-grid" id="qr-grid"></div>
+      <button class="new-btn" id="new-btn" type="button">← New Booking</button>
+    </div>
+
+  </div>
+
+  <script>
+    // ══════════════════════════════════════════════════════════════════
+    //  BACKEND URL — points to Render deployment
+    // ══════════════════════════════════════════════════════════════════
+    const BACKEND = 'https://slotix.onrender.com';
+
+    // ─── State ────────────────────────────────────────────────────────
+    let selectedSlots = new Set();
+    let pollTimer = null;
+
+    // ─── Load locations from backend ──────────────────────────────────
+    (async function loadLocations() {
+      const sel = document.getElementById('location');
+      try {
+        const resp = await fetch(`${BACKEND}/locations`);
+        const locs = await resp.json();
+        sel.innerHTML = '';
+        locs.forEach((loc, i) => {
+          const opt = document.createElement('option');
+          opt.value = loc.key;
+          opt.textContent = loc.label;
+          if (i === 0) opt.selected = true;
+          sel.appendChild(opt);
+        });
+      } catch (e) {
+        sel.innerHTML = '<option value="kolathur">Kolathur</option><option value="periyar_nagar">Periyar Nagar</option><option value="jawahar_nagar">Jawahar Nagar</option>';
+      }
+    })();
+
+    // ─── Default date = tomorrow ──────────────────────────────────────
+    (function setDefaultDate() {
+      const d = new Date();
+      d.setDate(d.getDate() + 1);
+      document.getElementById('date').value =
+        d.getFullYear() + '-' +
+        String(d.getMonth() + 1).padStart(2, '0') + '-' +
+        String(d.getDate()).padStart(2, '0');
+    })();
+
+    // ─── Slot toggles ────────────────────────────────────────────────
+    document.querySelectorAll('.slot-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = parseInt(btn.dataset.slot);
+        if (selectedSlots.has(id)) { selectedSlots.delete(id); btn.classList.remove('active'); }
+        else { selectedSlots.add(id); btn.classList.add('active'); }
+      });
+    });
+
+    // ─── Book Now ─────────────────────────────────────────────────────
+    const bookBtn     = document.getElementById('book-btn');
+    const statusMsg   = document.getElementById('status-msg');
+    const formSection = document.getElementById('form-section');
+    const resultsDiv  = document.getElementById('results');
+    const qrGrid      = document.getElementById('qr-grid');
+    const resultsHdr  = document.getElementById('results-header');
+
+    bookBtn.addEventListener('click', async () => {
+      statusMsg.className = 'status-msg';
+      statusMsg.textContent = '';
+
+      const date  = document.getElementById('date').value;
+      const name  = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+
+      if (!date) return showError('Please select a date.');
+      if (selectedSlots.size === 0) return showError('Select at least one slot.');
+      if (!name) return showError('Name is required.');
+      if (!/^\d{10}$/.test(phone)) return showError('Enter a valid 10-digit mobile number.');
+
+      const payload = {
+        location:  document.getElementById('location').value,
+        date:      date,
+        slot_ids:  Array.from(selectedSlots).sort(),
+        name:      name,
+        phone:     phone,
+        num_seats: parseInt(document.getElementById('seats').value),
+      };
+
+      bookBtn.disabled = true;
+      statusMsg.textContent = 'Connecting to GCC servers…';
+
+      try {
+        const resp = await fetch(`${BACKEND}/run`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!resp.ok) {
+          const err = await resp.json().catch(() => ({}));
+          throw new Error(err.error || `Server error ${resp.status}`);
+        }
+        const { session_id } = await resp.json();
+        showResults(payload.slot_ids, session_id);
+      } catch (e) {
+        showError(e.message || 'Connection failed. Is the backend running?');
+        bookBtn.disabled = false;
+      }
+    });
+
+    function showError(msg) {
+      statusMsg.className = 'status-msg error';
+      statusMsg.textContent = msg;
+    }
+
+    // ─── Slot labels ──────────────────────────────────────────────────
+    const SLOT_LABELS = {
+      1: '06:00 AM – 09:30 AM',
+      2: '10:00 AM – 01:30 PM',
+      3: '02:00 PM – 05:30 PM',
+      4: '06:00 PM – 09:30 PM',
+      5: '10:00 PM – 11:00 PM',
+    };
+
+    const PROCESSING = new Set(['pending', 'reserving', 'creating_order', 'creating_payment']);
+    const TERMINAL   = new Set(['paid', 'failed', 'error', 'timeout']);
+
+    // ─── Show results ─────────────────────────────────────────────────
+    function showResults(slotIds, sessionId) {
+      formSection.style.display = 'none';
+      resultsDiv.style.display = 'block';
+      resultsHdr.textContent = '⚡ Booking in Progress';
+      qrGrid.innerHTML = '';
+
+      slotIds.forEach((id, i) => {
+        const card = document.createElement('div');
+        card.className = 'qr-card fade-up';
+        card.style.animationDelay = `${i * 0.08}s`;
+        card.id = `card-${id}`;
+        card.innerHTML = `
+          <div class="qr-card-head">
+            <div class="qr-card-slot">Slot ${String(id).padStart(2,'0')} — ${SLOT_LABELS[id]}</div>
+            <span class="status-badge sb-pending">Pending</span>
+          </div>
+          <div class="qr-card-body">
+            <div class="spinner"></div>
+            <div class="spin-text">Connecting…</div>
+          </div>`;
+        qrGrid.appendChild(card);
+      });
+
+      startPolling(sessionId);
+    }
+
+    // ─── Polling ──────────────────────────────────────────────────────
+    function startPolling(sessionId) {
+      pollTimer = setInterval(async () => {
+        try {
+          const resp = await fetch(`${BACKEND}/status/${sessionId}`);
+          if (!resp.ok) return;
+          const data = await resp.json();
+          const slots = data.slots || {};
+
+          let allTerminal = true;
+          Object.values(slots).forEach(s => {
+            updateCard(s);
+            if (!TERMINAL.has(s.status)) allTerminal = false;
+          });
+
+          if (allTerminal) {
+            clearInterval(pollTimer);
+            resultsHdr.textContent = '✓ All slots processed';
+          }
+        } catch (_) {}
+      }, 3000);
+    }
+
+    // ─── Update individual card ───────────────────────────────────────
+    function updateCard(slot) {
+      const card = document.getElementById(`card-${slot.slot_id}`);
+      if (!card) return;
+      const st = slot.status;
+      const label = `Slot ${String(slot.slot_id).padStart(2,'0')} — ${slot.slot_label}`;
+
+      if (PROCESSING.has(st)) {
+        const txt = { pending:'Pending', reserving:'Reserving slot…', creating_order:'Creating order…', creating_payment:'Generating QR…' };
+        card.className = 'qr-card fade-up';
+        card.innerHTML = `
+          <div class="qr-card-head">
+            <div class="qr-card-slot">${label}</div>
+            <span class="status-badge sb-pending">${txt[st]}</span>
+          </div>
+          <div class="qr-card-body">
+            <div class="spinner"></div>
+            <div class="spin-text">${txt[st]}</div>
+          </div>`;
+        return;
+      }
+
+      if (st === 'awaiting_payment') {
+        card.className = 'qr-card fade-up awaiting';
+        card.innerHTML = `
+          <div class="qr-card-head">
+            <div class="qr-card-slot">${label}</div>
+            <span class="status-badge sb-awaiting">Awaiting Payment</span>
+          </div>
+          <div class="qr-card-body">
+            <img class="qr-img" src="data:image/png;base64,${slot.qr_base64}" alt="UPI QR" />
+            <div class="qr-amount">₹${slot.amount}</div>
+            <div class="qr-time">${slot.slot_label}</div>
+            <div class="qr-hint">Scan with PhonePe / GPay / Paytm</div>
+          </div>`;
+        return;
+      }
+
+      if (st === 'paid') {
+        card.className = 'qr-card fade-up paid';
+        card.innerHTML = `
+          <div class="qr-card-head">
+            <div class="qr-card-slot">${label}</div>
+            <span class="status-badge sb-paid">Paid</span>
+          </div>
+          <div class="qr-card-body">
+            <div class="check-circle">
+              <svg viewBox="0 0 24 24"><polyline points="6 13 10 17 18 7"/></svg>
+            </div>
+            <div class="paid-label">Payment Confirmed</div>
+            <div class="qr-time" style="margin-top:6px">${slot.slot_label}</div>
+          </div>`;
+        return;
+      }
+
+      // error / failed / timeout
+      card.className = 'qr-card fade-up error-state';
+      const errMsg = slot.error || (st === 'timeout' ? 'Payment timed out' : 'Payment failed');
+      card.innerHTML = `
+        <div class="qr-card-head">
+          <div class="qr-card-slot">${label}</div>
+          <span class="status-badge sb-error">${st}</span>
+        </div>
+        <div class="qr-card-body">
+          <div class="error-icon">✕</div>
+          <div class="error-label">${errMsg}</div>
+        </div>`;
+    }
+
+    // ─── New Booking ──────────────────────────────────────────────────
+    document.getElementById('new-btn').addEventListener('click', () => {
+      clearInterval(pollTimer);
+      resultsDiv.style.display = 'none';
+      formSection.style.display = 'block';
+      bookBtn.disabled = false;
+      statusMsg.textContent = '';
+      statusMsg.className = 'status-msg';
+      selectedSlots.clear();
+      document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('active'));
+    });
+  </script>
+</body>
+</html>
