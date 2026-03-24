@@ -686,8 +686,6 @@
           <select class="field-input" id="seats">
             <option value="1">1 seat — ₹5</option>
             <option value="2" selected>2 seats — ₹10</option>
-            <option value="3">3 seats — ₹15</option>
-            <option value="4">4 seats — ₹20</option>
           </select>
         </div>
       </div>
@@ -774,6 +772,7 @@
       userPhone = document.getElementById('phone').value.trim();
 
       if (datesArray.length === 0) return showError('Please select at least one date.');
+      if (datesArray.length > 5)   return showError('Maximum 5 dates allowed per booking.');
       if (selectedSlots.size === 0) return showError('Select at least one slot.');
       if (!userName) return showError('Name is required.');
       if (!/^\d{10}$/.test(userPhone)) return showError('Enter a valid 10-digit mobile number.');
