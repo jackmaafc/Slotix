@@ -1,17 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Slotix — GCC Co-Workspace Booking</title>
-  <meta name="description" content="Automatically book GCC Greater Chennai Corporation co-workspace study centre slots. Fill once, pay via Razorpay." />
+  <meta name="description"
+    content="Automatically book GCC Greater Chennai Corporation co-workspace study centre slots. Fill once, pay via Razorpay." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap"
+    rel="stylesheet" />
   <!-- Razorpay Checkout.js — handles payment UI (QR, UPI, cards etc.) -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <!-- Flatpickr for Multi-Date Selection -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
     :root {
       --bg: #0a0a0f;
@@ -30,7 +44,9 @@
       --radius-sm: 12px;
     }
 
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+    }
 
     body {
       font-family: 'DM Mono', monospace;
@@ -43,76 +59,116 @@
 
     body::before {
       content: '';
-      position: fixed; inset: 0;
+      position: fixed;
+      inset: 0;
       background-image:
         linear-gradient(rgba(212, 168, 67, 0.025) 1px, transparent 1px),
         linear-gradient(90deg, rgba(212, 168, 67, 0.025) 1px, transparent 1px);
       background-size: 64px 64px;
-      pointer-events: none; z-index: 0;
+      pointer-events: none;
+      z-index: 0;
     }
 
     .glow-top {
-      position: fixed; top: -300px; left: 50%; transform: translateX(-50%);
-      width: 800px; height: 600px;
-      background: radial-gradient(ellipse, rgba(212,168,67,0.07) 0%, transparent 70%);
-      pointer-events: none; z-index: 0;
+      position: fixed;
+      top: -300px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 600px;
+      background: radial-gradient(ellipse, rgba(212, 168, 67, 0.07) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
     }
 
     .glow-bottom {
-      position: fixed; bottom: -400px; left: 50%; transform: translateX(-50%);
-      width: 900px; height: 600px;
-      background: radial-gradient(ellipse, rgba(212,168,67,0.04) 0%, transparent 70%);
-      pointer-events: none; z-index: 0;
+      position: fixed;
+      bottom: -400px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px;
+      height: 600px;
+      background: radial-gradient(ellipse, rgba(212, 168, 67, 0.04) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
     }
 
     .container {
-      position: relative; z-index: 1;
-      max-width: 600px; margin: 0 auto;
+      position: relative;
+      z-index: 1;
+      max-width: 600px;
+      margin: 0 auto;
       padding: 48px 20px 80px;
     }
 
     /* ─── Header ─────────────────────────────────────────── */
-    .header { text-align: center; margin-bottom: 40px; }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
 
     .badge {
-      display: inline-flex; align-items: center; gap: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       padding: 6px 16px;
       background: rgba(212, 168, 67, 0.08);
       border: 1px solid rgba(212, 168, 67, 0.2);
       border-radius: 40px;
-      font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
-      color: var(--gold); margin-bottom: 20px;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
     }
 
     .badge-dot {
-      width: 6px; height: 6px; border-radius: 50%;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
       background: var(--gold);
       animation: pulse-dot 2s ease infinite;
     }
 
     @keyframes pulse-dot {
-      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(212,168,67,0.4); }
-      50%      { opacity: 0.6; box-shadow: 0 0 0 6px rgba(212,168,67,0); }
+
+      0%,
+      100% {
+        opacity: 1;
+        box-shadow: 0 0 0 0 rgba(212, 168, 67, 0.4);
+      }
+
+      50% {
+        opacity: 0.6;
+        box-shadow: 0 0 0 6px rgba(212, 168, 67, 0);
+      }
     }
 
     .logo {
       font-family: 'Syne', sans-serif;
-      font-weight: 800; font-size: 52px;
+      font-weight: 800;
+      font-size: 52px;
       background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text; letter-spacing: -2px;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -2px;
       margin-bottom: 12px;
     }
 
     .tagline {
-      color: var(--text-dim); font-size: 12px;
-      max-width: 380px; margin: 0 auto; line-height: 1.8;
+      color: var(--text-dim);
+      font-size: 12px;
+      max-width: 380px;
+      margin: 0 auto;
+      line-height: 1.8;
     }
 
     /* ─── Cards ───────────────────────────────────────────── */
     .card {
       background: var(--surface);
-      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 28px 24px;
@@ -120,253 +176,452 @@
       transition: border-color 0.3s;
     }
 
-    .card:hover { border-color: var(--border-bright); }
+    .card:hover {
+      border-color: var(--border-bright);
+    }
 
     .card-title {
       font-family: 'Syne', sans-serif;
-      font-weight: 700; font-size: 13px;
-      color: var(--gold); letter-spacing: 2px;
-      text-transform: uppercase; margin-bottom: 20px;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--gold);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
     }
 
     /* ─── Form Elements ───────────────────────────────────── */
-    .field { margin-bottom: 20px; }
-    .field:last-child { margin-bottom: 0; }
+    .field {
+      margin-bottom: 20px;
+    }
+
+    .field:last-child {
+      margin-bottom: 0;
+    }
 
     .field-label {
-      display: block; font-size: 10px; letter-spacing: 2px;
-      text-transform: uppercase; color: var(--text-dim);
-      margin-bottom: 8px; font-weight: 500;
+      display: block;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+      font-weight: 500;
     }
 
     .field-input {
-      width: 100%; padding: 14px 16px;
-      background: rgba(255,255,255,0.03);
+      width: 100%;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       color: var(--text);
-      font-family: 'DM Mono', monospace; font-size: 13px;
-      outline: none; transition: border-color 0.25s, box-shadow 0.25s;
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s;
     }
 
     .field-input:focus {
       border-color: var(--gold);
-      box-shadow: 0 0 0 3px rgba(212,168,67,0.08);
+      box-shadow: 0 0 0 3px rgba(212, 168, 67, 0.08);
     }
 
     select.field-input {
-      appearance: none; cursor: pointer;
+      appearance: none;
+      cursor: pointer;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23d4a843' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-      background-repeat: no-repeat; background-position: right 14px center;
+      background-repeat: no-repeat;
+      background-position: right 14px center;
       padding-right: 36px;
     }
 
-    select.field-input option { background: #16161e; color: var(--text); }
+    select.field-input option {
+      background: #16161e;
+      color: var(--text);
+    }
 
-    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
 
     /* ─── Slot selector ───────────────────────────────────── */
-    .slots-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+    .slots-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
 
     .slot-btn {
-      flex: 1 1 calc(50% - 10px); min-width: 130px;
+      flex: 1 1 calc(50% - 10px);
+      min-width: 130px;
       padding: 14px 10px;
-      background: rgba(255,255,255,0.02);
+      background: rgba(255, 255, 255, 0.02);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       color: var(--text-dim);
-      font-family: 'DM Mono', monospace; font-size: 11px;
-      cursor: pointer; text-align: center;
-      transition: all 0.25s; user-select: none;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.25s;
+      user-select: none;
       position: relative;
     }
 
-    .slot-btn:hover { border-color: var(--gold); color: var(--text); }
+    .slot-btn:hover {
+      border-color: var(--gold);
+      color: var(--text);
+    }
 
     .slot-btn.active {
-      background: rgba(212,168,67,0.08);
+      background: rgba(212, 168, 67, 0.08);
       border-color: var(--gold);
       color: var(--gold-light);
-      box-shadow: 0 0 20px rgba(212,168,67,0.1);
+      box-shadow: 0 0 20px rgba(212, 168, 67, 0.1);
     }
 
     .slot-btn.active::after {
-      content: '✓'; position: absolute; top: 6px; right: 10px;
-      font-size: 12px; color: var(--gold-light);
+      content: '✓';
+      position: absolute;
+      top: 6px;
+      right: 10px;
+      font-size: 12px;
+      color: var(--gold-light);
     }
 
-    .slot-num { font-weight: 500; font-size: 13px; display: block; margin-bottom: 2px; }
+    .slot-num {
+      font-weight: 500;
+      font-size: 13px;
+      display: block;
+      margin-bottom: 2px;
+    }
 
     /* ─── Book button ─────────────────────────────────────── */
     .book-btn {
-      width: 100%; padding: 16px; margin-top: 4px;
-      border: none; border-radius: var(--radius-sm);
+      width: 100%;
+      padding: 16px;
+      margin-top: 4px;
+      border: none;
+      border-radius: var(--radius-sm);
       background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
       color: #0a0a0f;
-      font-family: 'Syne', sans-serif; font-weight: 700;
-      font-size: 15px; letter-spacing: 1px;
-      cursor: pointer; text-transform: uppercase;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      text-transform: uppercase;
       transition: transform 0.2s, box-shadow 0.3s, opacity 0.3s;
     }
 
     .book-btn:hover:not(:disabled) {
       transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(212,168,67,0.25);
+      box-shadow: 0 8px 32px rgba(212, 168, 67, 0.25);
     }
 
-    .book-btn:active:not(:disabled) { transform: translateY(0); }
-    .book-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .book-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .book-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
 
     .status-msg {
-      text-align: center; margin-top: 14px;
-      font-size: 12px; color: var(--text-dim); min-height: 18px;
+      text-align: center;
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--text-dim);
+      min-height: 18px;
     }
-    .status-msg.error { color: var(--red); }
+
+    .status-msg.error {
+      color: var(--red);
+    }
 
     /* ─── Results ─────────────────────────────────────────── */
-    #results { display: none; }
+    #results {
+      display: none;
+    }
 
     .results-header {
       font-family: 'Syne', sans-serif;
-      font-weight: 700; font-size: 20px;
-      color: var(--gold-light); text-align: center;
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--gold-light);
+      text-align: center;
       margin-bottom: 24px;
     }
 
-    .qr-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+    .qr-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
 
     .qr-card {
       background: var(--surface);
-      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      overflow: hidden; transition: border-color 0.3s;
+      overflow: hidden;
+      transition: border-color 0.3s;
     }
 
     .qr-card-head {
-      display: flex; justify-content: space-between; align-items: center;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       padding: 16px 20px;
       border-bottom: 1px solid var(--border);
     }
 
     .qr-card-slot {
       font-family: 'Syne', sans-serif;
-      font-weight: 600; font-size: 14px; color: var(--text);
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text);
     }
 
-    .qr-card-body { padding: 24px 20px; text-align: center; }
+    .qr-card-body {
+      padding: 24px 20px;
+      text-align: center;
+    }
 
-    .qr-card.paid { border-color: rgba(62,207,142,0.4); }
-    .qr-card.error-state { border-color: rgba(239,68,68,0.4); }
+    .qr-card.paid {
+      border-color: rgba(62, 207, 142, 0.4);
+    }
+
+    .qr-card.error-state {
+      border-color: rgba(239, 68, 68, 0.4);
+    }
 
     /* ─── Badges ──────────────────────────────────────────── */
     .status-badge {
-      display: inline-block; padding: 3px 10px;
-      border-radius: 20px; font-size: 9px;
-      letter-spacing: 1.5px; text-transform: uppercase; font-weight: 500;
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 9px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-weight: 500;
     }
 
-    .sb-pending   { background: rgba(96,165,250,0.1); color: var(--blue); border: 1px solid rgba(96,165,250,0.2); }
-    .sb-ready     { background: rgba(212,168,67,0.1); color: var(--gold-light); border: 1px solid rgba(212,168,67,0.25); }
-    .sb-paid      { background: rgba(62,207,142,0.1); color: var(--green); border: 1px solid rgba(62,207,142,0.25); }
-    .sb-error     { background: rgba(239,68,68,0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.25); }
+    .sb-pending {
+      background: rgba(96, 165, 250, 0.1);
+      color: var(--blue);
+      border: 1px solid rgba(96, 165, 250, 0.2);
+    }
+
+    .sb-ready {
+      background: rgba(212, 168, 67, 0.1);
+      color: var(--gold-light);
+      border: 1px solid rgba(212, 168, 67, 0.25);
+    }
+
+    .sb-paid {
+      background: rgba(62, 207, 142, 0.1);
+      color: var(--green);
+      border: 1px solid rgba(62, 207, 142, 0.25);
+    }
+
+    .sb-error {
+      background: rgba(239, 68, 68, 0.1);
+      color: var(--red);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+    }
 
     /* ─── Spinner ─────────────────────────────────────────── */
     .spinner {
-      width: 32px; height: 32px; margin: 12px auto;
-      border: 3px solid var(--border); border-top-color: var(--gold);
-      border-radius: 50%; animation: spin 0.7s linear infinite;
+      width: 32px;
+      height: 32px;
+      margin: 12px auto;
+      border: 3px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .spin-text { color: var(--text-dim); font-size: 11px; margin-top: 8px; }
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .spin-text {
+      color: var(--text-dim);
+      font-size: 11px;
+      margin-top: 8px;
+    }
 
     /* ─── Pay button in card ──────────────────────────────── */
     .pay-btn {
-      display: inline-block; padding: 12px 32px; margin-top: 14px;
-      border: none; border-radius: var(--radius-sm);
+      display: inline-block;
+      padding: 12px 32px;
+      margin-top: 14px;
+      border: none;
+      border-radius: var(--radius-sm);
       background: linear-gradient(135deg, var(--gold-dark), var(--gold), var(--gold-light));
       color: #0a0a0f;
-      font-family: 'Syne', sans-serif; font-weight: 700;
-      font-size: 13px; letter-spacing: 1px; text-transform: uppercase;
-      cursor: pointer; transition: transform 0.2s, box-shadow 0.3s;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.3s;
     }
 
     .pay-btn:hover {
       transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(212,168,67,0.25);
+      box-shadow: 0 6px 20px rgba(212, 168, 67, 0.25);
     }
 
-    .pay-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .pay-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
 
     .pay-amount {
       font-family: 'Syne', sans-serif;
-      font-size: 28px; font-weight: 700;
-      color: var(--gold-light); margin: 8px 0 4px;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--gold-light);
+      margin: 8px 0 4px;
     }
 
-    .pay-hint { color: var(--text-dim); font-size: 10px; letter-spacing: 1px; margin-top: 8px; }
+    .pay-hint {
+      color: var(--text-dim);
+      font-size: 10px;
+      letter-spacing: 1px;
+      margin-top: 8px;
+    }
 
     /* ─── Paid animation ──────────────────────────────────── */
     .check-circle {
-      width: 56px; height: 56px; margin: 8px auto 12px;
-      border-radius: 50%; background: rgba(62,207,142,0.12);
+      width: 56px;
+      height: 56px;
+      margin: 8px auto 12px;
+      border-radius: 50%;
+      background: rgba(62, 207, 142, 0.12);
       border: 2px solid var(--green);
-      display: flex; align-items: center; justify-content: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       animation: pop-in 0.4s ease;
     }
 
     .check-circle svg {
-      width: 28px; height: 28px; stroke: var(--green);
-      stroke-width: 3; fill: none;
-      stroke-dasharray: 40; stroke-dashoffset: 40;
+      width: 28px;
+      height: 28px;
+      stroke: var(--green);
+      stroke-width: 3;
+      fill: none;
+      stroke-dasharray: 40;
+      stroke-dashoffset: 40;
       animation: draw-check 0.5s 0.2s ease forwards;
     }
 
     @keyframes pop-in {
-      0% { transform: scale(0); } 60% { transform: scale(1.15); } 100% { transform: scale(1); }
+      0% {
+        transform: scale(0);
+      }
+
+      60% {
+        transform: scale(1.15);
+      }
+
+      100% {
+        transform: scale(1);
+      }
     }
 
     @keyframes draw-check {
-      to { stroke-dashoffset: 0; }
+      to {
+        stroke-dashoffset: 0;
+      }
     }
 
-    .paid-label { color: var(--green); font-weight: 600; font-size: 13px; }
+    .paid-label {
+      color: var(--green);
+      font-weight: 600;
+      font-size: 13px;
+    }
 
-    .error-icon { font-size: 36px; margin: 8px 0; }
-    .error-label { color: var(--red); font-size: 12px; margin-top: 4px; word-break: break-word; }
+    .error-icon {
+      font-size: 36px;
+      margin: 8px 0;
+    }
+
+    .error-label {
+      color: var(--red);
+      font-size: 12px;
+      margin-top: 4px;
+      word-break: break-word;
+    }
 
     /* ─── New booking ─────────────────────────────────────── */
     .new-btn {
-      display: block; margin: 28px auto 0;
+      display: block;
+      margin: 28px auto 0;
       padding: 12px 36px;
       background: transparent;
       border: 1px solid var(--border-bright);
       border-radius: var(--radius-sm);
       color: var(--gold);
-      font-family: 'DM Mono', monospace; font-size: 12px;
-      cursor: pointer; transition: all 0.25s;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.25s;
     }
 
     .new-btn:hover {
-      background: rgba(212,168,67,0.06);
+      background: rgba(212, 168, 67, 0.06);
       border-color: var(--gold);
     }
 
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(16px); }
-      to   { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
-    .fade-up { animation: fadeUp 0.5s ease forwards; }
+
+    .fade-up {
+      animation: fadeUp 0.5s ease forwards;
+    }
 
     @media (max-width: 480px) {
-      .row { grid-template-columns: 1fr; }
-      .logo { font-size: 40px; }
-      .container { padding: 32px 16px 60px; }
-      .card { padding: 22px 18px; }
+      .row {
+        grid-template-columns: 1fr;
+      }
+
+      .logo {
+        font-size: 40px;
+      }
+
+      .container {
+        padding: 32px 16px 60px;
+      }
+
+      .card {
+        padding: 22px 18px;
+      }
     }
   </style>
 </head>
+
 <body>
 
   <div class="glow-top"></div>
@@ -377,7 +632,8 @@
     <div class="header">
       <div class="badge"><span class="badge-dot"></span>GCC Co-Workspace · Automated</div>
       <div class="logo">Slotix</div>
-      <div class="tagline">Book multiple study centre slots simultaneously.<br/>Auto-fills the GCC form · Opens Razorpay · Pay · Done.</div>
+      <div class="tagline">Book multiple study centre slots simultaneously.<br />Auto-fills the GCC form · Opens
+        Razorpay · Pay · Done.</div>
     </div>
 
     <!-- ─── Form ──────────────────────────────────────── -->
@@ -392,19 +648,24 @@
           </select>
         </div>
         <div class="field">
-          <label class="field-label" for="date">Date</label>
-          <input type="date" class="field-input" id="date" />
+          <label class="field-label" for="date">Dates</label>
+          <input type="text" class="field-input" id="date" placeholder="Select dates..." />
         </div>
       </div>
 
       <div class="card fade-up" style="animation-delay: 0.08s">
         <div class="card-title">Select Slots</div>
         <div class="slots-grid" id="slots-grid">
-          <button class="slot-btn" data-slot="1" type="button"><span class="slot-num">Slot 01</span>06:00 AM – 09:30 AM</button>
-          <button class="slot-btn" data-slot="2" type="button"><span class="slot-num">Slot 02</span>10:00 AM – 01:30 PM</button>
-          <button class="slot-btn" data-slot="3" type="button"><span class="slot-num">Slot 03</span>02:00 PM – 05:30 PM</button>
-          <button class="slot-btn" data-slot="4" type="button"><span class="slot-num">Slot 04</span>06:00 PM – 09:30 PM</button>
-          <button class="slot-btn" data-slot="5" type="button"><span class="slot-num">Slot 05</span>10:00 PM – 11:00 PM</button>
+          <button class="slot-btn" data-slot="1" type="button"><span class="slot-num">Slot 01</span>06:00 AM – 09:30
+            AM</button>
+          <button class="slot-btn" data-slot="2" type="button"><span class="slot-num">Slot 02</span>10:00 AM – 01:30
+            PM</button>
+          <button class="slot-btn" data-slot="3" type="button"><span class="slot-num">Slot 03</span>02:00 PM – 05:30
+            PM</button>
+          <button class="slot-btn" data-slot="4" type="button"><span class="slot-num">Slot 04</span>06:00 PM – 09:30
+            PM</button>
+          <button class="slot-btn" data-slot="5" type="button"><span class="slot-num">Slot 05</span>10:00 PM – 11:00
+            PM</button>
         </div>
       </div>
 
@@ -445,189 +706,180 @@
     </div>
   </div>
 
-<script>
-  // ═══════════════════════════════════════════════════════════════
-  //  CONFIG
-  // ═══════════════════════════════════════════════════════════════
-  const BACKEND = 'https://slotix.onrender.com';
+  <script>
+    // ═══════════════════════════════════════════════════════════════
+    //  CONFIG
+    // ═══════════════════════════════════════════════════════════════
+    const BACKEND = 'https://slotix.onrender.com';
 
-  // ─── State ──────────────────────────────────────────────────────
-  let selectedSlots = new Set();
-  let pollTimer     = null;
-  let sessionId     = null;
-  let userName      = '';
-  let userPhone     = '';
+    // ─── State ──────────────────────────────────────────────────────
+    let selectedSlots = new Set();
+    let pollTimer = null;
+    let sessionId = null;
+    let userName = '';
+    let userPhone = '';
 
-  // ─── Load locations from backend ────────────────────────────────
-  (async function loadLocations() {
-    const sel = document.getElementById('location');
-    try {
-      const resp = await fetch(`${BACKEND}/locations`);
-      const locs = await resp.json();
-      sel.innerHTML = '';
-      locs.forEach((loc, i) => {
-        const opt = document.createElement('option');
-        opt.value = loc.key;
-        opt.textContent = loc.label;
-        if (i === 0) opt.selected = true;
-        sel.appendChild(opt);
-      });
-    } catch (e) {
-      sel.innerHTML = '<option value="kolathur">Kolathur</option><option value="periyar_nagar">Periyar Nagar</option><option value="jawahar_nagar">Jawahar Nagar</option>';
-    }
-  })();
+    // ─── Load locations from backend ────────────────────────────────
+    (async function loadLocations() {
+      const sel = document.getElementById('location');
+      try {
+        const resp = await fetch(`${BACKEND}/locations`);
+        const locs = await resp.json();
+        sel.innerHTML = '';
+        locs.forEach((loc, i) => {
+          const opt = document.createElement('option');
+          opt.value = loc.key;
+          opt.textContent = loc.label;
+          if (i === 0) opt.selected = true;
+          sel.appendChild(opt);
+        });
+      } catch (e) {
+        sel.innerHTML = '<option value="kolathur">Kolathur</option><option value="periyar_nagar">Periyar Nagar</option><option value="jawahar_nagar">Jawahar Nagar</option>';
+      }
+    })();
 
-  // ─── Default date = tomorrow ────────────────────────────────────
-  (function setDefaultDate() {
-    const d = new Date();
-    d.setDate(d.getDate() + 1);
-    document.getElementById('date').value =
-      d.getFullYear() + '-' +
-      String(d.getMonth() + 1).padStart(2, '0') + '-' +
-      String(d.getDate()).padStart(2, '0');
-  })();
-
-  // ─── Slot toggles ──────────────────────────────────────────────
-  document.querySelectorAll('.slot-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const id = parseInt(btn.dataset.slot);
-      if (selectedSlots.has(id)) { selectedSlots.delete(id); btn.classList.remove('active'); }
-      else { selectedSlots.add(id); btn.classList.add('active'); }
+    // ─── Initialize Flatpickr for multiple dates ────────────────────
+    let datePicker = flatpickr("#date", {
+      mode: "multiple",
+      dateFormat: "Y-m-d",
+      minDate: "today",
+      theme: "dark"
     });
-  });
 
-  // ─── DOM refs ───────────────────────────────────────────────────
-  const bookBtn     = document.getElementById('book-btn');
-  const statusMsg   = document.getElementById('status-msg');
-  const formSection = document.getElementById('form-section');
-  const resultsDiv  = document.getElementById('results');
-  const qrGrid      = document.getElementById('qr-grid');
-  const resultsHdr  = document.getElementById('results-header');
+    // ─── Slot toggles ──────────────────────────────────────────────
+    document.querySelectorAll('.slot-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = parseInt(btn.dataset.slot);
+        if (selectedSlots.has(id)) { selectedSlots.delete(id); btn.classList.remove('active'); }
+        else { selectedSlots.add(id); btn.classList.add('active'); }
+      });
+    });
 
-  // ─── Book Now ───────────────────────────────────────────────────
-  bookBtn.addEventListener('click', async () => {
-    statusMsg.className = 'status-msg';
-    statusMsg.textContent = '';
+    // ─── DOM refs ───────────────────────────────────────────────────
+    const bookBtn = document.getElementById('book-btn');
+    const statusMsg = document.getElementById('status-msg');
+    const formSection = document.getElementById('form-section');
+    const resultsDiv = document.getElementById('results');
+    const qrGrid = document.getElementById('qr-grid');
+    const resultsHdr = document.getElementById('results-header');
 
-    const date  = document.getElementById('date').value;
-    userName    = document.getElementById('name').value.trim();
-    userPhone   = document.getElementById('phone').value.trim();
+    // ─── Book Now ───────────────────────────────────────────────────
+    bookBtn.addEventListener('click', async () => {
+      statusMsg.className = 'status-msg';
+      statusMsg.textContent = '';
 
-    if (!date)                 return showError('Please select a date.');
-    if (selectedSlots.size === 0) return showError('Select at least one slot.');
-    if (!userName)             return showError('Name is required.');
-    if (!/^\d{10}$/.test(userPhone)) return showError('Enter a valid 10-digit mobile number.');
+      const dateVal = document.getElementById('date').value;
+      const datesArray = dateVal ? dateVal.split(', ') : [];
+      userName = document.getElementById('name').value.trim();
+      userPhone = document.getElementById('phone').value.trim();
 
-    const payload = {
-      location:  document.getElementById('location').value,
-      date,
-      slot_ids:  Array.from(selectedSlots).sort(),
-      name:      userName,
-      phone:     userPhone,
-      num_seats: parseInt(document.getElementById('seats').value),
+      if (datesArray.length === 0) return showError('Please select at least one date.');
+      if (selectedSlots.size === 0) return showError('Select at least one slot.');
+      if (!userName) return showError('Name is required.');
+      if (!/^\d{10}$/.test(userPhone)) return showError('Enter a valid 10-digit mobile number.');
+
+      const payload = {
+        location: document.getElementById('location').value,
+        dates: datesArray,
+        slot_ids: Array.from(selectedSlots).sort(),
+        name: userName,
+        phone: userPhone,
+        num_seats: parseInt(document.getElementById('seats').value),
+      };
+
+      bookBtn.disabled = true;
+      statusMsg.textContent = 'Connecting to GCC servers…';
+
+      try {
+        const resp = await fetch(`${BACKEND}/run`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (!resp.ok) {
+          const err = await resp.json().catch(() => ({}));
+          throw new Error(err.error || `Server error ${resp.status}`);
+        }
+        const data = await resp.json();
+        sessionId = data.session_id;
+        showResults();
+      } catch (e) {
+        showError(e.message || 'Connection failed. Is the backend running?');
+        bookBtn.disabled = false;
+      }
+    });
+
+    function showError(msg) {
+      statusMsg.className = 'status-msg error';
+      statusMsg.textContent = msg;
+    }
+
+    // ─── Slot labels ────────────────────────────────────────────────
+    const SLOT_LABELS = {
+      1: '06:00 AM – 09:30 AM',
+      2: '10:00 AM – 01:30 PM',
+      3: '02:00 PM – 05:30 PM',
+      4: '06:00 PM – 09:30 PM',
+      5: '10:00 PM – 11:00 PM',
     };
 
-    bookBtn.disabled = true;
-    statusMsg.textContent = 'Connecting to GCC servers…';
+    const PROCESSING = new Set(['pending', 'reserving', 'creating_order']);
+    const TERMINAL = new Set(['paid', 'error']);
 
-    try {
-      const resp = await fetch(`${BACKEND}/run`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      if (!resp.ok) {
-        const err = await resp.json().catch(() => ({}));
-        throw new Error(err.error || `Server error ${resp.status}`);
-      }
-      const data = await resp.json();
-      sessionId = data.session_id;
-      showResults(payload.slot_ids);
-    } catch (e) {
-      showError(e.message || 'Connection failed. Is the backend running?');
-      bookBtn.disabled = false;
+    // ─── Show results ───────────────────────────────────────────────
+    function showResults() {
+      formSection.style.display = 'none';
+      resultsDiv.style.display = 'block';
+      resultsHdr.textContent = '⚡ Booking in Progress';
+      qrGrid.innerHTML = '';
+      startPolling();
     }
-  });
 
-  function showError(msg) {
-    statusMsg.className = 'status-msg error';
-    statusMsg.textContent = msg;
-  }
+    // ─── Polling ────────────────────────────────────────────────────
+    function startPolling() {
+      // Fire immediately so we don't wait 3s for the first UI update
+      fetchAndUpdate();
+      pollTimer = setInterval(fetchAndUpdate, 3000);
+      
+      async function fetchAndUpdate() {
+        try {
+          const resp = await fetch(`${BACKEND}/status/${sessionId}`);
+          if (!resp.ok) return;
+          const data = await resp.json();
+          const slots = data.slots || {};
 
-  // ─── Slot labels ────────────────────────────────────────────────
-  const SLOT_LABELS = {
-    1: '06:00 AM – 09:30 AM',
-    2: '10:00 AM – 01:30 PM',
-    3: '02:00 PM – 05:30 PM',
-    4: '06:00 PM – 09:30 PM',
-    5: '10:00 PM – 11:00 PM',
-  };
+          let allTerminal = true;
+          Object.values(slots).forEach(s => {
+            updateCard(s);
+            if (!TERMINAL.has(s.status)) allTerminal = false;
+          });
 
-  const PROCESSING = new Set(['pending', 'reserving', 'creating_order']);
-  const TERMINAL   = new Set(['paid', 'error']);
+          if (allTerminal) {
+            clearInterval(pollTimer);
+            resultsHdr.textContent = '✓ All slots processed';
+          }
+        } catch (_) { }
+      }
+    }
 
-  // ─── Show results ───────────────────────────────────────────────
-  function showResults(slotIds) {
-    formSection.style.display = 'none';
-    resultsDiv.style.display = 'block';
-    resultsHdr.textContent = '⚡ Booking in Progress';
-    qrGrid.innerHTML = '';
+    // ─── Update card ────────────────────────────────────────────────
+    function updateCard(slot) {
+      let card = document.getElementById(`card-${slot.slot_id}`);
+      if (!card) {
+        card = document.createElement('div');
+        card.id = `card-${slot.slot_id}`;
+        card.className = 'qr-card fade-up';
+        qrGrid.appendChild(card);
+      }
+      
+      const st = slot.status;
+      const label = slot.slot_label || slot.slot_id;
 
-    slotIds.forEach((id, i) => {
-      const card = document.createElement('div');
-      card.className = 'qr-card fade-up';
-      card.style.animationDelay = `${i * 0.08}s`;
-      card.id = `card-${id}`;
-      card.innerHTML = `
-        <div class="qr-card-head">
-          <div class="qr-card-slot">Slot ${String(id).padStart(2,'0')} — ${SLOT_LABELS[id]}</div>
-          <span class="status-badge sb-pending">Pending</span>
-        </div>
-        <div class="qr-card-body">
-          <div class="spinner"></div>
-          <div class="spin-text">Reserving slot on GCC…</div>
-        </div>`;
-      qrGrid.appendChild(card);
-    });
-
-    startPolling();
-  }
-
-  // ─── Polling ────────────────────────────────────────────────────
-  function startPolling() {
-    pollTimer = setInterval(async () => {
-      try {
-        const resp = await fetch(`${BACKEND}/status/${sessionId}`);
-        if (!resp.ok) return;
-        const data = await resp.json();
-        const slots = data.slots || {};
-
-        let allTerminal = true;
-        Object.values(slots).forEach(s => {
-          updateCard(s);
-          if (!TERMINAL.has(s.status)) allTerminal = false;
-        });
-
-        if (allTerminal) {
-          clearInterval(pollTimer);
-          resultsHdr.textContent = '✓ All slots processed';
-        }
-      } catch (_) {}
-    }, 3000);
-  }
-
-  // ─── Update card ────────────────────────────────────────────────
-  function updateCard(slot) {
-    const card = document.getElementById(`card-${slot.slot_id}`);
-    if (!card) return;
-    const st = slot.status;
-    const label = `Slot ${String(slot.slot_id).padStart(2,'0')} — ${slot.slot_label}`;
-
-    // Processing states (pending / reserving / creating_order)
-    if (PROCESSING.has(st)) {
-      const txt = { pending: 'Connecting…', reserving: 'Reserving slot on GCC…', creating_order: 'Creating payment order…' };
-      card.className = 'qr-card fade-up';
-      card.innerHTML = `
+      // Processing states (pending / reserving / creating_order)
+      if (PROCESSING.has(st)) {
+        const txt = { pending: 'Connecting…', reserving: 'Reserving slot on GCC…', creating_order: 'Creating payment order…' };
+        card.className = 'qr-card fade-up';
+        card.innerHTML = `
         <div class="qr-card-head">
           <div class="qr-card-slot">${label}</div>
           <span class="status-badge sb-pending">${txt[st] || st}</span>
@@ -636,40 +888,39 @@
           <div class="spinner"></div>
           <div class="spin-text">${txt[st] || st}</div>
         </div>`;
-      return;
-    }
+        return;
+      }
 
-    // Ready to pay — show Pay Now button that opens Razorpay checkout
-    if (st === 'ready_to_pay') {
-      card.className = 'qr-card fade-up';
-      card.style.borderColor = 'var(--border-bright)';
-      const btnId = `pay-btn-${slot.slot_id}`;
-      // Only rebuild if not already showing the pay button
-      if (!card.querySelector(`#${btnId}`)) {
-        const amountRupees = (slot.amount_paise / 100).toFixed(0);
-        card.innerHTML = `
+      // Ready to pay — show Pay Now button that opens Razorpay checkout
+      if (st === 'ready_to_pay') {
+        card.className = 'qr-card fade-up';
+        card.style.borderColor = 'var(--border-bright)';
+        const btnId = `pay-btn-${slot.slot_id}`;
+        // Only rebuild if not already showing the pay button
+        if (!card.querySelector(`#${btnId}`)) {
+          const amountRupees = (slot.amount_paise / 100).toFixed(0);
+          card.innerHTML = `
           <div class="qr-card-head">
             <div class="qr-card-slot">${label}</div>
             <span class="status-badge sb-ready">Ready to Pay</span>
           </div>
           <div class="qr-card-body">
             <div class="pay-amount">₹${amountRupees}</div>
-            <div class="spin-text" style="margin-bottom: 4px">${slot.slot_label}</div>
+            <div class="spin-text" style="margin-bottom: 4px">UPI / QR / Cards accepted</div>
             <button class="pay-btn" id="${btnId}" type="button">Pay with Razorpay</button>
-            <div class="pay-hint">Opens Razorpay checkout · UPI / QR / Card</div>
           </div>`;
-        // Attach click handler to open Razorpay
-        card.querySelector(`#${btnId}`).addEventListener('click', () => {
-          openRazorpay(slot);
-        });
+          // Attach click handler to open Razorpay
+          card.querySelector(`#${btnId}`).addEventListener('click', () => {
+            openRazorpay(slot, label);
+          });
+        }
+        return;
       }
-      return;
-    }
 
-    // Paid
-    if (st === 'paid') {
-      card.className = 'qr-card fade-up paid';
-      card.innerHTML = `
+      // Paid
+      if (st === 'paid') {
+        card.className = 'qr-card fade-up paid';
+        card.innerHTML = `
         <div class="qr-card-head">
           <div class="qr-card-slot">${label}</div>
           <span class="status-badge sb-paid">Paid</span>
@@ -679,15 +930,14 @@
             <svg viewBox="0 0 24 24"><polyline points="6 13 10 17 18 7"/></svg>
           </div>
           <div class="paid-label">Payment Confirmed!</div>
-          <div class="spin-text" style="margin-top:6px">${slot.slot_label}</div>
         </div>`;
-      return;
-    }
+        return;
+      }
 
-    // Error
-    card.className = 'qr-card fade-up error-state';
-    const errMsg = slot.error || 'Something went wrong';
-    card.innerHTML = `
+      // Error
+      card.className = 'qr-card fade-up error-state';
+      const errMsg = slot.error || 'Something went wrong';
+      card.innerHTML = `
       <div class="qr-card-head">
         <div class="qr-card-slot">${label}</div>
         <span class="status-badge sb-error">Error</span>
@@ -696,86 +946,87 @@
         <div class="error-icon">✕</div>
         <div class="error-label">${errMsg}</div>
       </div>`;
-  }
+    }
 
-  // ─── Open Razorpay Checkout ─────────────────────────────────────
-  function openRazorpay(slot) {
-    const options = {
-      key:         slot.razorpay_key,
-      amount:      slot.amount_paise,
-      order_id:    slot.order_id,
-      currency:    'INR',
-      name:        'Greater Chennai Corporation',
-      description: 'Co-workspace Transaction',
-      prefill: {
-        name:    userName,
-        contact: userPhone,
-      },
-      handler: function (response) {
-        // Payment successful — update backend and UI
-        markPaid(slot.slot_id, response.razorpay_payment_id);
-      },
-      modal: {
-        ondismiss: function () {
-          // User closed the checkout without paying — no action needed
+    // ─── Open Razorpay Checkout ─────────────────────────────────────
+    function openRazorpay(slot, label) {
+      const options = {
+        key: slot.razorpay_key,
+        amount: slot.amount_paise,
+        order_id: slot.order_id,
+        currency: 'INR',
+        name: 'Greater Chennai Corporation',
+        description: 'Co-workspace Transaction',
+        prefill: {
+          name: userName,
+          contact: userPhone,
+        },
+        handler: function (response) {
+          // Payment successful — update backend and UI
+          markPaid(slot.slot_id, response.razorpay_payment_id);
+        },
+        modal: {
+          ondismiss: function () {
+            // User closed the checkout without paying — no action needed
+          }
+        },
+        theme: {
+          color: '#d4a843'
         }
-      },
-      theme: {
-        color: '#d4a843'
+      };
+
+      const rzp = new Razorpay(options);
+      rzp.open();
+    }
+
+    // ─── Mark slot as paid ──────────────────────────────────────────
+    async function markPaid(slotId, paymentId) {
+      // Update UI immediately
+      const card = document.getElementById(`card-${slotId}`);
+      if (card) {
+        updateCard({
+          slot_id: slotId,
+          slot_label: SLOT_LABELS[slotId],
+          status: 'paid'
+        });
       }
-    };
 
-    const rzp = new Razorpay(options);
-    rzp.open();
-  }
+      // Notify backend
+      try {
+        await fetch(`${BACKEND}/confirm/${sessionId}/${slotId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ razorpay_payment_id: paymentId }),
+        });
+      } catch (_) { }
 
-  // ─── Mark slot as paid ──────────────────────────────────────────
-  async function markPaid(slotId, paymentId) {
-    // Update UI immediately
-    const card = document.getElementById(`card-${slotId}`);
-    if (card) {
-      updateCard({
-        slot_id: slotId,
-        slot_label: SLOT_LABELS[slotId],
-        status: 'paid'
-      });
+      // Check if all done
+      checkAllDone();
     }
 
-    // Notify backend
-    try {
-      await fetch(`${BACKEND}/confirm/${sessionId}/${slotId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ razorpay_payment_id: paymentId }),
-      });
-    } catch (_) {}
+    function checkAllDone() {
+      const cards = qrGrid.querySelectorAll('.qr-card');
+      const allDone = Array.from(cards).every(c =>
+        c.classList.contains('paid') || c.classList.contains('error-state')
+      );
+      if (allDone) {
+        clearInterval(pollTimer);
+        resultsHdr.textContent = '✓ All slots processed';
+      }
+    }
 
-    // Check if all done
-    checkAllDone();
-  }
-
-  function checkAllDone() {
-    const cards = qrGrid.querySelectorAll('.qr-card');
-    const allDone = Array.from(cards).every(c =>
-      c.classList.contains('paid') || c.classList.contains('error-state')
-    );
-    if (allDone) {
+    // ─── New Booking ────────────────────────────────────────────────
+    document.getElementById('new-btn').addEventListener('click', () => {
       clearInterval(pollTimer);
-      resultsHdr.textContent = '✓ All slots processed';
-    }
-  }
-
-  // ─── New Booking ────────────────────────────────────────────────
-  document.getElementById('new-btn').addEventListener('click', () => {
-    clearInterval(pollTimer);
-    resultsDiv.style.display = 'none';
-    formSection.style.display = 'block';
-    bookBtn.disabled = false;
-    statusMsg.textContent = '';
-    statusMsg.className = 'status-msg';
-    selectedSlots.clear();
-    document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('active'));
-  });
-</script>
+      resultsDiv.style.display = 'none';
+      formSection.style.display = 'block';
+      bookBtn.disabled = false;
+      statusMsg.textContent = '';
+      statusMsg.className = 'status-msg';
+      selectedSlots.clear();
+      document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('active'));
+    });
+  </script>
 </body>
+
 </html>

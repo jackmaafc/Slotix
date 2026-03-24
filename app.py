@@ -67,11 +67,11 @@ def read_session(session_id):
 # payment — exactly like the GCC website does when you click "Pay Now".
 # ─────────────────────────────────────────────────────────────────────────────
 
-def booking_flow(session_id, slot_id, location, date, name, phone, num_seats):
+def booking_flow(session_id, slot_key, location, date, name, phone, num_seats, real_slot_id):
     loc = LOCATIONS[location]
 
     # ── Step 1: Reserve slot (automates form submission) ─────────────
-    update_slot(session_id, slot_id, status="reserving")
+    update_slot(session_id, slot_key, status="reserving")
     try:
         reserve_data = {
             "catId":      loc["catId"],
@@ -82,7 +82,7 @@ def booking_flow(session_id, slot_id, location, date, name, phone, num_seats):
             "toDate":     date,
             "userName":   name,
             "userMobile": phone,
-            "slots[]":    slot_id,
+            "slots[]":    real_slot_id,
         }
         resp = http_requests.post(
             f"{GCC_BASE}/book/api/saveInTemp",
@@ -95,19 +95,19 @@ def booking_flow(session_id, slot_id, location, date, name, phone, num_seats):
 
         if rjson.get("status") != "SUCCESS":
             msg = rjson.get("message", str(rjson))
-            update_slot(session_id, slot_id, status="error", error=msg)
+            update_slot(session_id, slot_key, status="error", error=msg)
             return
 
         temp_book_id = rjson["tempBookId"]
         amount = rjson.get("amount", 0)
-        update_slot(session_id, slot_id, amount=amount, tempBookId=temp_book_id)
+        update_slot(session_id, slot_key, amount=amount, tempBookId=temp_book_id)
 
     except Exception as e:
-        update_slot(session_id, slot_id, status="error", error=f"Reservation failed: {e}")
+        update_slot(session_id, slot_key, status="error", error=f"Reservation failed: {e}")
         return
 
     # ── Step 2: Create Razorpay order (automates "Pay Now" click) ────
-    update_slot(session_id, slot_id, status="creating_order")
+    update_slot(session_id, slot_key, status="creating_order")
     try:
         order_resp = http_requests.post(
             f"{GCC_BASE}/book/api/create_order",
@@ -122,14 +122,14 @@ def booking_flow(session_id, slot_id, location, date, name, phone, num_seats):
         amount_paise = ojson["amount"]
 
         # Ready for payment — frontend will open Razorpay checkout.js
-        update_slot(session_id, slot_id,
+        update_slot(session_id, slot_key,
                     status="ready_to_pay",
                     order_id=order_id,
                     amount_paise=amount_paise,
                     razorpay_key=RAZORPAY_KEY)
 
     except Exception as e:
-        update_slot(session_id, slot_id, status="error", error=f"Order creation failed: {e}")
+        update_slot(session_id, slot_key, status="error", error=f"Order creation failed: {e}")
         return
 
 
@@ -152,16 +152,16 @@ def get_locations():
 def run():
     data = request.get_json(force=True)
 
-    date      = data.get("date")
+    dates     = data.get("dates")
     slot_ids  = data.get("slot_ids")
     location  = data.get("location", "kolathur")
     name      = data.get("name", "Shriram")
     phone     = data.get("phone", "8825743347")
     num_seats = data.get("num_seats", 2)
 
-    if not date:
-        return jsonify({"error": "date is required"}), 400
-    if not slot_ids or not isinstance(slot_ids, list):
+    if not dates or not isinstance(dates, list) or len(dates) == 0:
+        return jsonify({"error": "dates must be a non-empty list"}), 400
+    if not slot_ids or not isinstance(slot_ids, list) or len(slot_ids) == 0:
         return jsonify({"error": "slot_ids must be a non-empty list"}), 400
     if location not in LOCATIONS:
         return jsonify({"error": f"Invalid location. Choose from: {list(LOCATIONS.keys())}"}), 400
@@ -169,11 +169,13 @@ def run():
     session_id = str(uuid.uuid4())
 
     with sessions_lock:
-        sessions[session_id] = {
-            "slots": {
-                str(sid): {
-                    "slot_id":       sid,
-                    "slot_label":    SLOT_LABELS.get(sid, f"Slot {sid}"),
+        sessions[session_id] = {"slots": {}}
+        for d in dates:
+            for sid in slot_ids:
+                slot_key = f"{d}_{sid}"
+                sessions[session_id]["slots"][slot_key] = {
+                    "slot_id":       slot_key,
+                    "slot_label":    f"{d} — {SLOT_LABELS.get(sid, f'Slot {sid}')}",
                     "status":        "pending",
                     "amount":        None,
                     "amount_paise":  None,
@@ -181,17 +183,16 @@ def run():
                     "razorpay_key":  None,
                     "error":         None,
                 }
-                for sid in slot_ids
-            }
-        }
 
-    for sid in slot_ids:
-        t = threading.Thread(
-            target=booking_flow,
-            args=(session_id, sid, location, date, name, phone, num_seats),
-            daemon=True,
-        )
-        t.start()
+    for d in dates:
+        for sid in slot_ids:
+            slot_key = f"{d}_{sid}"
+            t = threading.Thread(
+                target=booking_flow,
+                args=(session_id, slot_key, location, d, name, phone, num_seats, sid),
+                daemon=True,
+            )
+            t.start()
 
     return jsonify({"session_id": session_id})
 
