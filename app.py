@@ -1,10 +1,7 @@
 import uuid
 import threading
-import io
-import base64
-import time
+import copy
 import requests as http_requests
-import qrcode
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
@@ -17,8 +14,6 @@ LOCATIONS = {
     "kolathur":      {"buildId": 1, "catId": 1,  "subId": 1,  "label": "Kolathur"},
     "periyar_nagar": {"buildId": 2, "catId": 4,  "subId": 8,  "label": "Periyar Nagar"},
     "jawahar_nagar": {"buildId": 4, "catId": 7,  "subId": 13, "label": "Jawahar Nagar"},
-    # To add a new centre, add a new entry here with its buildId, catId, subId and label
-    # These values can be found by capturing a HAR from the GCC booking website
 }
 
 SLOT_LABELS = {
@@ -52,43 +47,30 @@ sessions_lock = threading.Lock()
 
 
 def update_slot(session_id, slot_id, **kwargs):
-    """Thread-safe update of a slot's fields."""
     with sessions_lock:
-        slot = sessions[session_id]["slots"][str(slot_id)]
-        slot.update(kwargs)
+        sessions[session_id]["slots"][str(slot_id)].update(kwargs)
 
 
 def read_session(session_id):
-    """Thread-safe read of a full session."""
     with sessions_lock:
-        session = sessions.get(session_id)
-        if session is None:
-            return None
-        # Return a deep-ish copy so the response isn't affected by concurrent writes
-        import copy
-        return copy.deepcopy(session)
-
-
-# ─── Helpers ──────────────────────────────────────────────────────────────────
-
-def generate_qr_base64(data_string):
-    """Generate a QR code PNG and return it as a base64 string."""
-    qr = qrcode.QRCode(version=1, box_size=10, border=4)
-    qr.add_data(data_string)
-    qr.make(fit=True)
-    img = qr.make_image(fill_color="black", back_color="white")
-    buf = io.BytesIO()
-    img.save(buf, format="PNG")
-    buf.seek(0)
-    return base64.b64encode(buf.read()).decode("utf-8")
+        s = sessions.get(session_id)
+        return copy.deepcopy(s) if s else None
 
 
 # ─── Booking flow (one thread per slot) ──────────────────────────────────────
+#
+# This automates the GCC form-filling process:
+#   Step 1: Reserve the slot (saveInTemp)
+#   Step 2: Create the Razorpay order (create_order)
+#
+# After these two steps, the frontend uses Razorpay checkout.js to handle
+# payment — exactly like the GCC website does when you click "Pay Now".
+# ─────────────────────────────────────────────────────────────────────────────
 
 def booking_flow(session_id, slot_id, location, date, name, phone, num_seats):
     loc = LOCATIONS[location]
 
-    # ── Step 1: Reserve slot ──────────────────────────────────────────
+    # ── Step 1: Reserve slot (automates form submission) ─────────────
     update_slot(session_id, slot_id, status="reserving")
     try:
         reserve_data = {
@@ -112,22 +94,19 @@ def booking_flow(session_id, slot_id, location, date, name, phone, num_seats):
         rjson = resp.json()
 
         if rjson.get("status") != "SUCCESS":
-            update_slot(session_id, slot_id,
-                        status="error",
-                        error=f"Reservation failed: {rjson}")
+            msg = rjson.get("message", str(rjson))
+            update_slot(session_id, slot_id, status="error", error=msg)
             return
 
         temp_book_id = rjson["tempBookId"]
         amount = rjson.get("amount", 0)
-        update_slot(session_id, slot_id, amount=amount)
+        update_slot(session_id, slot_id, amount=amount, tempBookId=temp_book_id)
 
     except Exception as e:
-        update_slot(session_id, slot_id,
-                    status="error",
-                    error=f"Reservation error: {str(e)}")
+        update_slot(session_id, slot_id, status="error", error=f"Reservation failed: {e}")
         return
 
-    # ── Step 2: Create Razorpay order ─────────────────────────────────
+    # ── Step 2: Create Razorpay order (automates "Pay Now" click) ────
     update_slot(session_id, slot_id, status="creating_order")
     try:
         order_resp = http_requests.post(
@@ -138,81 +117,20 @@ def booking_flow(session_id, slot_id, location, date, name, phone, num_seats):
         )
         order_resp.raise_for_status()
         ojson = order_resp.json()
+
         order_id = ojson["id"]
         amount_paise = ojson["amount"]
 
-    except Exception as e:
+        # Ready for payment — frontend will open Razorpay checkout.js
         update_slot(session_id, slot_id,
-                    status="error",
-                    error=f"Order creation error: {str(e)}")
-        return
-
-    # ── Step 3: Create UPI payment ────────────────────────────────────
-    update_slot(session_id, slot_id, status="creating_payment")
-    try:
-        payment_data = {
-            "description":    "Co-workspace Transaction",
-            "notes[address]": "Greater Chennai Corporation.",
-            "contact":        f"+91{phone}",
-            "currency":       "INR",
-            "amount":         amount_paise,
-            "order_id":       order_id,
-            "method":         "upi",
-            "_[flow]":        "intent",
-            "upi[flow]":      "intent",
-            "_[upiqr]":       "1",
-            "_[library]":     "checkoutjs",
-            "_[platform]":    "browser",
-        }
-        pay_resp = http_requests.post(
-            f"https://api.razorpay.com/v1/standard_checkout/payments/create/ajax?key_id={RAZORPAY_KEY}",
-            data=payment_data,
-            headers={"content-type": "application/x-www-form-urlencoded"},
-            timeout=30,
-        )
-        pay_resp.raise_for_status()
-        pjson = pay_resp.json()
-
-        intent_url = pjson["data"]["intent_url"]
-        payment_id = pjson["payment_id"]
-        status_url = pjson["request"]["url"]
-
-        qr_b64 = generate_qr_base64(intent_url)
-
-        update_slot(session_id, slot_id,
-                    status="awaiting_payment",
-                    qr_base64=qr_b64,
-                    paymentId=payment_id,
-                    statusUrl=status_url)
+                    status="ready_to_pay",
+                    order_id=order_id,
+                    amount_paise=amount_paise,
+                    razorpay_key=RAZORPAY_KEY)
 
     except Exception as e:
-        update_slot(session_id, slot_id,
-                    status="error",
-                    error=f"Payment creation error: {str(e)}")
+        update_slot(session_id, slot_id, status="error", error=f"Order creation failed: {e}")
         return
-
-    # ── Step 4: Poll for payment ──────────────────────────────────────
-    for _ in range(120):
-        time.sleep(5)
-        try:
-            poll_resp = http_requests.get(status_url, timeout=15)
-            poll_json = poll_resp.json()
-            poll_status = poll_json.get("status", "").lower()
-
-            if poll_status in ("captured", "authorized"):
-                update_slot(session_id, slot_id, status="paid")
-                return
-            elif poll_status == "failed":
-                update_slot(session_id, slot_id,
-                            status="failed",
-                            error="Payment failed")
-                return
-        except Exception:
-            continue  # keep polling on transient errors
-
-    update_slot(session_id, slot_id,
-                status="timeout",
-                error="Payment polling timed out after 10 minutes")
 
 
 # ─── Routes ───────────────────────────────────────────────────────────────────
@@ -234,11 +152,11 @@ def get_locations():
 def run():
     data = request.get_json(force=True)
 
-    date     = data.get("date")
-    slot_ids = data.get("slot_ids")
-    location = data.get("location", "kolathur")
-    name     = data.get("name", "Shriram")
-    phone    = data.get("phone", "8825743347")
+    date      = data.get("date")
+    slot_ids  = data.get("slot_ids")
+    location  = data.get("location", "kolathur")
+    name      = data.get("name", "Shriram")
+    phone     = data.get("phone", "8825743347")
     num_seats = data.get("num_seats", 2)
 
     if not date:
@@ -254,12 +172,14 @@ def run():
         sessions[session_id] = {
             "slots": {
                 str(sid): {
-                    "slot_id":   sid,
-                    "slot_label": SLOT_LABELS.get(sid, f"Slot {sid}"),
-                    "status":    "pending",
-                    "qr_base64": None,
-                    "amount":    None,
-                    "error":     None,
+                    "slot_id":       sid,
+                    "slot_label":    SLOT_LABELS.get(sid, f"Slot {sid}"),
+                    "status":        "pending",
+                    "amount":        None,
+                    "amount_paise":  None,
+                    "order_id":      None,
+                    "razorpay_key":  None,
+                    "error":         None,
                 }
                 for sid in slot_ids
             }
@@ -282,6 +202,27 @@ def status(session_id):
     if session is None:
         return jsonify({"error": "Session not found"}), 404
     return jsonify(session)
+
+
+# ─── Confirm payment (called by frontend after Razorpay success) ─────────────
+
+@app.route("/confirm/<session_id>/<slot_id>", methods=["POST"])
+def confirm_payment(session_id, slot_id):
+    """Called by frontend after Razorpay checkout completes successfully."""
+    data = request.get_json(force=True)
+    payment_id = data.get("razorpay_payment_id", "")
+
+    with sessions_lock:
+        session = sessions.get(session_id)
+        if not session:
+            return jsonify({"error": "Session not found"}), 404
+        slot = session["slots"].get(str(slot_id))
+        if not slot:
+            return jsonify({"error": "Slot not found"}), 404
+        slot["status"] = "paid"
+        slot["payment_id"] = payment_id
+
+    return jsonify({"status": "ok"})
 
 
 # ─── Entry point ──────────────────────────────────────────────────────────────
