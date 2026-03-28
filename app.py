@@ -90,14 +90,21 @@ def booking_flow(session_id, slot_key, location, date, name, phone, num_seats, r
             headers=GCC_HEADERS,
             timeout=30,
         )
-        resp.raise_for_status()
-        rjson = resp.json()
+
+        # ⚠️  Parse JSON BEFORE raise_for_status — GCC sends its error
+        # message (e.g. "Slot Full") in the body even on 400 responses.
+        # Calling raise_for_status() first would discard that body.
+        try:
+            rjson = resp.json()
+        except Exception:
+            resp.raise_for_status()   # no JSON body — surface the HTTP error
+            raise
 
         if rjson.get("status") != "SUCCESS":
             raw_msg = rjson.get("message") or rjson.get("error") or str(rjson)
             # Normalise GCC's vague errors into user-facing messages
             raw_lower = raw_msg.lower()
-            if any(k in raw_lower for k in ("slot full", "seat", "capacity", "no seats", "not available")):
+            if any(k in raw_lower for k in ("slot full", "seat", "capacity", "no seats", "not available", "full")):
                 user_msg = "Slot Full — no seats available for this date/time."
             elif "internal server error" in raw_lower or "exception" in raw_lower:
                 user_msg = "GCC server error — try a different date or slot."
@@ -330,31 +337,50 @@ def get_slot_availability():
     loc = LOCATIONS[location_key]
 
     try:
-        avail_resp = http_requests.post(
-            f"{GCC_BASE}/book/api/getAvailability",
-            data={
-                "catId":    loc["catId"],
-                "buildId":  loc["buildId"],
-                "subId":    loc["subId"],
-                "fromDate": date,
-                "toDate":   date,
-                "slots[]": slot_id,
-            },
-            headers=GCC_HEADERS,
-            timeout=15,
-        )
-        avail_resp.raise_for_status()
-        avail_json = avail_resp.json()
+        # GCC's slot-detail endpoint returns available/booked counts.
+        # We try two known endpoint names — whichever succeeds wins.
+        avail_json = None
+        for endpoint in ("getSlotDetails", "getAvailability", "slotAvailability"):
+            try:
+                r = http_requests.post(
+                    f"{GCC_BASE}/book/api/{endpoint}",
+                    data={
+                        "catId":    loc["catId"],
+                        "buildId":  loc["buildId"],
+                        "subId":    loc["subId"],
+                        "fromDate": date,
+                        "toDate":   date,
+                        "slots[]": slot_id,
+                    },
+                    headers=GCC_HEADERS,
+                    timeout=10,
+                )
+                if r.ok:
+                    avail_json = r.json()
+                    break
+            except Exception:
+                continue
 
-        # GCC typically returns something like:
-        # [{"slotId": 1, "availableSeats": 12, "totalSeats": 20, ...}]
-        # Normalise into a consistent structure regardless of GCC's exact schema
+        if avail_json is None:
+            return jsonify({"error": "Availability not returned by GCC"}), 502
+
+        # Normalise whatever GCC returns into a consistent seats count.
+        # Common field names: availableSeats, available, seatsAvailable,
+        # remainingSeats, noOfAvailableSeats
         seats = None
+        CHECK_KEYS = ("availableSeats", "available", "seatsAvailable",
+                      "remainingSeats", "noOfAvailableSeats", "availableCount")
         if isinstance(avail_json, list) and len(avail_json) > 0:
             first = avail_json[0]
-            seats = first.get("availableSeats") or first.get("available") or first.get("seatsAvailable")
+            for k in CHECK_KEYS:
+                if first.get(k) is not None:
+                    seats = first[k]
+                    break
         elif isinstance(avail_json, dict):
-            seats = avail_json.get("availableSeats") or avail_json.get("available")
+            for k in CHECK_KEYS:
+                if avail_json.get(k) is not None:
+                    seats = avail_json[k]
+                    break
 
         return jsonify({
             "location":        location_key,
