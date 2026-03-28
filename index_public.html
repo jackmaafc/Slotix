@@ -906,8 +906,26 @@
           <div class="qr-card-body">
             <div class="pay-amount">₹${amountRupees}</div>
             <div class="spin-text" style="margin-bottom: 4px">UPI / QR / Cards accepted</div>
+            <div id="avail-${slot.slot_id}" style="font-size:10px;color:var(--text-dim);margin-bottom:10px;min-height:14px;"></div>
             <button class="pay-btn" id="${btnId}" type="button">Pay with Razorpay</button>
           </div>`;
+          // Fetch real-time seat availability from our backend
+          const [slotDate, slotNum] = slot.slot_id.split('_');
+          const loc = document.getElementById('location')?.value || 'kolathur';
+          fetch(`${BACKEND}/slots?location=${loc}&date=${slotDate}&slot_id=${slotNum}`)
+            .then(r => r.ok ? r.json() : null)
+            .then(avail => {
+              const el = document.getElementById(`avail-${slot.slot_id}`);
+              if (!el) return;
+              if (avail && avail.available_seats !== null && avail.available_seats !== undefined) {
+                const n = avail.available_seats;
+                const color = n > 5 ? 'var(--green)' : n > 0 ? 'var(--gold-light)' : 'var(--red)';
+                el.innerHTML = `<span style="color:${color};font-weight:600">${n} seat${n === 1 ? '' : 's'} available</span>`;
+              } else {
+                el.textContent = '';
+              }
+            })
+            .catch(() => {});
           // Attach click handler to open Razorpay
           card.querySelector(`#${btnId}`).addEventListener('click', () => {
             openRazorpay(slot, label);
@@ -916,7 +934,28 @@
         return;
       }
 
-      // Paid
+      // Confirmed (GCC returned a booking_id)
+      if (st === 'confirmed') {
+        card.className = 'qr-card fade-up paid';
+        const gccLink = `https://gccservices.in/muthalvarpadaippagam/bookingQRCode?booking_id=${slot.booking_id}`;
+        card.innerHTML = `
+        <div class="qr-card-head">
+          <div class="qr-card-slot">${label}</div>
+          <span class="status-badge sb-paid">Confirmed</span>
+        </div>
+        <div class="qr-card-body">
+          <div class="check-circle">
+            <svg viewBox="0 0 24 24"><polyline points="6 13 10 17 18 7"/></svg>
+          </div>
+          <div class="paid-label">Booking Confirmed!</div>
+          <a href="${gccLink}" target="_blank" rel="noopener"
+             style="display:inline-block;margin-top:12px;padding:8px 20px;background:rgba(62,207,142,0.12);border:1px solid rgba(62,207,142,0.3);border-radius:8px;color:var(--green);font-size:11px;text-decoration:none;letter-spacing:1px;"
+          >View GCC QR &amp; Confirmation ↗</a>
+        </div>`;
+        return;
+      }
+
+      // Paid (payment captured but GCC confirmation pending / warning)
       if (st === 'paid') {
         card.className = 'qr-card fade-up paid';
         card.innerHTML = `
@@ -962,7 +1001,7 @@
         },
         handler: function (response) {
           // Payment successful — update backend and UI
-          markPaid(slot.slot_id, response.razorpay_payment_id);
+          markPaid(slot.slot_id, response.razorpay_payment_id, response.razorpay_order_id);
         },
         modal: {
           ondismiss: function () {
@@ -979,27 +1018,47 @@
     }
 
     // ─── Mark slot as paid ──────────────────────────────────────────
-    async function markPaid(slotId, paymentId) {
-      // Update UI immediately
+    async function markPaid(slotId, paymentId, orderId) {
+      // Optimistic UI update to 'paid' while we wait for GCC confirmation
       const card = document.getElementById(`card-${slotId}`);
+      const slotLabel = card?.querySelector('.qr-card-slot')?.textContent || slotId;
       if (card) {
-        updateCard({
-          slot_id: slotId,
-          slot_label: SLOT_LABELS[slotId],
-          status: 'paid'
-        });
+        updateCard({ slot_id: slotId, slot_label: slotLabel, status: 'paid' });
       }
 
-      // Notify backend
+      // Call backend which triggers GCC's /book/api/Confirm
       try {
-        await fetch(`${BACKEND}/confirm/${sessionId}/${slotId}`, {
+        const res = await fetch(`${BACKEND}/confirm/${sessionId}/${slotId}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ razorpay_payment_id: paymentId }),
+          body: JSON.stringify({
+            razorpay_payment_id: paymentId,
+            razorpay_order_id:   orderId || '',
+          }),
         });
+        if (res.ok) {
+          const result = await res.json();
+          if (result.booking_id) {
+            // GCC confirmed — upgrade the card to 'confirmed' with a deep-link
+            updateCard({
+              slot_id:    slotId,
+              slot_label: slotLabel,
+              status:     'confirmed',
+              booking_id: result.booking_id,
+            });
+          } else if (result.gcc_error) {
+            // Payment captured, but GCC confirmation ran into an issue — show a warning
+            const currentCard = document.getElementById(`card-${slotId}`);
+            if (currentCard) {
+              const warn = document.createElement('div');
+              warn.style.cssText = 'color:#f0c96a;font-size:10px;margin-top:8px;padding:6px 10px;background:rgba(240,201,106,0.08);border-radius:8px;line-height:1.5;';
+              warn.textContent = '⚠ ' + result.gcc_error;
+              currentCard.querySelector('.qr-card-body')?.appendChild(warn);
+            }
+          }
+        }
       } catch (_) { }
 
-      // Check if all done
       checkAllDone();
     }
 

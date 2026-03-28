@@ -1,0 +1,1990 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>MUTHALVAR PADAIPPAGAM</title>
+    <base href="/muthalvarpadaippagam/" />
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="#">
+    <meta name="keywords" content="Admin , Responsive, Landing, Bootstrap, App, Template, Mobile, iOS, Android, apple, creative app">
+    <meta name="author" content="#">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <!-- Favicon icon -->
+    <link rel="icon" href="files/assets/images/favicon.png" type="image/x-icon">
+    <!-- Google font-->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,800" rel="stylesheet">
+    <!-- Required Fremwork -->
+    <link rel="stylesheet" type="text/css" href="files/bower_components/bootstrap/css/bootstrap.min.css">
+    <!-- themify-icons line icon -->
+    <link rel="stylesheet" type="text/css" href="files/assets/icon/themify-icons/themify-icons.css">
+    <!-- ico font -->
+    <link rel="stylesheet" type="text/css" href="files/assets/icon/icofont/css/icofont.css">
+
+    <!-- feather Awesome -->
+    <link rel="stylesheet" type="text/css" href="files/assets/icon/feather/css/feather.css">
+    <!-- font Awesome -->
+    <link rel="stylesheet" type="text/css" href="files/assets/icon/font-awesome/css/font-awesome.min.css">
+    <!-- Syntax highlighter Prism css -->
+    <link rel="stylesheet" type="text/css" href="files/assets/pages/prism/prism.css">
+    <!-- Style.css -->
+    <link rel="stylesheet" type="text/css" href="files/assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="files/assets/css/jquery.mCustomScrollbar.css">
+    <link rel="stylesheet" type="text/css" href="files/assets/css/pcoded-horizontal.min.css">
+    
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<style>
+#seatfor .btn-group {
+    position: relative;
+    z-index: 0;
+}
+</style>
+</head>
+<style>
+    .pcoded-content {
+        /*background-image: url("images/bg_partial.png");*/
+        background-repeat: no-repeat;
+        background-position: top;
+
+    }
+
+    .custom-card {
+        /*background-image: url("images/bg_partial.png");
+		/* Background image for the card */
+        /*background-size: cover;
+		background-position: center;
+		/*padding: 20px;*/
+        border-radius: 10px;
+        color: #083959;
+        display: flex;
+        align-items: center;
+        max-width: 100%;
+        height: 750px;
+        margin-top: -90px;
+    }
+
+    .card-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 20px;
+        color: #083959;
+    }
+
+    .card-content h2 {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+
+    .card-content p {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+
+    .btn {
+        margin-right: 10px;
+    }
+
+    /*.card-image {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}*/
+
+    .card-image img {
+        width: 200%;
+        height: 730;
+        border-radius: 10px;
+    }
+
+    /**/
+    .carousel-overlay-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: white;
+        z-index: 2;
+    }
+
+    .carousel-overlay-text h2 {
+        font-size: 2em;
+        /* Adjust as needed */
+        font-weight: bold;
+        text-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+        /* Optional: adds a shadow for readability */
+    }
+
+    .carousel-inner img {
+        height: 650px;
+        object-fit: cover;
+    }
+
+
+    /* Content Wrapper */
+    .content-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 30px;
+    }
+
+    /* Content Container */
+    .content-container {
+        width: 100%;
+        /* Set content width to 100% within col */
+        margin-right: 20px;
+        /* Add some space between the content and the image */
+        font-size: 0.9rem;
+        /* Reduce font size */
+        padding: 20px;
+        border-radius: 5px;
+    }
+
+    /* Headings and Paragraphs */
+    .content-container h2 {
+        margin: 10px 0;
+        font-size: 2rem;
+        color: #333;
+    }
+
+    .content-container p {
+        margin: 10px 0;
+        font-size: 1rem;
+        color: #555;
+    }
+
+    /* Buttons */
+    .content-container .btn {
+        margin-top: 15px;
+        padding: 10px 20px;
+        font-size: 1.2rem;
+        background-color: #2c3e50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .content-container .btn:hover {
+        background-color: #E29D25;
+    }
+
+    /* Existing image container constraints */
+    .image-container img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 12px;
+    }
+
+    /* Adjust space block for desktop */
+    .space-block {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 30px 0;
+    }
+
+
+    /* Responsive behavior */
+    @media (max-width: 768px) {
+        .space-block {
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .col-sm-6 {
+            width: 100%;
+            max-width: 100%;
+            padding: 0;
+            margin-bottom: 20px;
+        }
+
+        .content-container {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .image-container {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 15px;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+
+        .content-container h2 {
+            font-size: 1.5rem;
+        }
+
+        .content-container p,
+        .content-container .btn {
+            font-size: 0.95rem;
+        }
+    }
+
+
+    /* Inverted layout (image on left, content on right) */
+    .reverse-content-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 30px;
+        flex-direction: row-reverse;
+        /* This reverses the order */
+    }
+
+    /* Separator Style */
+    .separator {
+        margin: 30px 0;
+        /* Space above and below */
+        height: 20px;
+        /* Optional height for visibility */
+        background-color: #f0f0f0;
+        /* Optional background color */
+    }
+
+    /* Pricing Section Styles */
+    .pricing-section {
+        text-align: center;
+        padding: 30px 0;
+        /* Add padding for spacing */
+    }
+
+    .pricing-section h2 {
+        font-size: 2.5rem;
+        /* Size for the title */
+        color: #333;
+        /* Title color */
+        margin-bottom: 20px;
+        /* Space below the title */
+    }
+
+    .pricing-section p {
+        font-size: 1.2rem;
+        /* Description font size */
+        color: #555;
+        /* Description color */
+        margin-bottom: 40px;
+        /* Space below the description */
+    }
+
+    /* Card Styles */
+    .card {
+        border: 1px solid #ddd;
+        /* Keep the existing border */
+        border-radius: 10px;
+        /* Rounded corners */
+        padding: 40px;
+        /* Inner padding */
+        margin: 10px;
+        /* Space between cards */
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        /* Shadow effect */
+        text-align: center;
+        /* Centered text */
+        background-color: white;
+        color: white;
+        /* Change text color to white */
+    }
+
+    .card h3 {
+        font-size: 1.5rem;
+        /* Card title size */
+        color: white;
+        /* Ensure card title is white */
+    }
+
+    .card p {
+        font-size: 1rem;
+        /* Card description font size */
+        color: white;
+        /* Change card description color to white */
+        margin: 10px 0;
+        /* Space above and below */
+    }
+
+    .card .btn {
+        background-color: #007bff;
+        /* Button color */
+        color: white;
+        /* Button text color */
+    }
+
+    .card .btn:hover {
+        background-color: #0056b3;
+        /* Button hover color */
+    }
+
+    /* Responsive Button Styles */
+    .btn-white {
+        background-color: transparent;
+        /* No background color */
+        color: white;
+        /* Text color white */
+        border: 2px solid white;
+        /* White border */
+    }
+
+    .btn-white:hover {
+        background-color: white;
+        /* Change background to white on hover */
+        color: #007bff;
+        /* Change text color on hover */
+    }
+
+    /* Button Toggle Styles */
+    .btn-toggle {
+        background-color: #6c757d;
+        /* Grey background */
+        color: white;
+        /* White text */
+        border: none;
+        /* No border */
+        padding: 10px 20px;
+        /* Padding */
+        border-radius: 5px;
+        /* Rounded corners */
+        cursor: pointer;
+        /* Pointer cursor */
+        transition: background-color 0.3s ease;
+        /* Transition effect */
+    }
+
+    .btn-toggle.active {
+        background-color: #007bff;
+        /* Active button color */
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+        .content-wrapper {
+            flex-direction: column;
+            /* Stack elements vertically on small screens */
+        }
+
+
+
+        .carousel-inner img {
+            height: 300px;
+
+        }
+
+        .btn {
+            font-size: 1rem;
+
+            padding: 8px 16px;
+
+        }
+
+        .card {
+            width: 100%;
+
+            margin: 10px 0;
+
+        }
+
+        .separator {
+            height: 10px;
+
+        }
+    }
+
+    /* Styles for Larger Devices */
+    @media (min-width: 769px) {
+        .pricing-cards {
+            display: flex;
+            flex-wrap: nowrap;
+            /* No wrapping for larger screens */
+            justify-content: center;
+            /* Centering cards horizontally */
+            gap: 20px;
+            /* Optional spacing between cards */
+        }
+    }
+
+    /* Global Styles */
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background-color: #f8f9fa;
+        font-family: Arial, sans-serif;
+    }
+
+    .pricing-container {
+        text-align: center;
+        margin: 50px auto;
+        max-width: 900px;
+    }
+
+    h1 {
+        font-size: 2.5em;
+        color: #2c3e50;
+    }
+
+    p {
+        margin-bottom: 30px;
+        font-size: 1.2em;
+        color: white;
+    }
+
+    .tabs {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 40px;
+    }
+
+    .tab {
+        padding: 10px 20px;
+        border: 2px solid #2c3e50;
+        background-color: transparent;
+        cursor: pointer;
+        border-radius: 25px;
+        color: #2c3e50;
+        font-size: 1em;
+    }
+
+    .tab.active {
+        background-color: #2c3e50;
+        color: white;
+    }
+
+    .card {
+        height: 400px;
+        width: 300px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 20px;
+        box-sizing: border-box;
+        /* Ensures padding doesn't affect width */
+        margin: 0 auto;
+    }
+
+
+
+    .card h2 {
+        font-size: 1.5em;
+        color: #2c3e50;
+    }
+
+    .card h3 {
+        font-size: 2.5em;
+        color: #e74c3c;
+    }
+
+    .card p {
+        font-size: 0.9em;
+        color: #7f8c8d;
+    }
+
+    .card ul {
+        list-style: none;
+        margin-top: 20px;
+        text-align: left;
+    }
+
+    .card ul li {
+        margin-bottom: 10px;
+        font-size: 1em;
+        color: #2c3e50;
+        display: flex;
+        align-items: center;
+    }
+
+    .card ul li::before {
+        content: "✔";
+        color: #2ecc71;
+        margin-right: 10px;
+    }
+
+    .most-popular {
+        border: 2px solid #e74c3c;
+        box-shadow: 0 6px 15px rgba(231, 76, 60, 0.2);
+    }
+
+    .most-popular .badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #e74c3c;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 0.8em;
+    }
+
+    .book-now-btn {
+        background-color: #2c3e50;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        align-self: center;
+        /* Centers the button horizontally */
+        margin-bottom: 5px;
+        /* Pushes the button to the bottom of the .card */
+    }
+
+    .book-now-btn:hover {
+        background-color: #0056b3;
+    }
+
+
+    .desk-space-card.card h2,
+    .desk-space-card.card p,
+    .desk-space-card.card ul,
+    .desk-space-card.card li {
+        color: white !important;
+    }
+
+    /* Responsive styling for the image */
+    .responsive-img {
+        height: 500px;
+        width: auto;
+    }
+
+    /* Media query for smaller screens */
+    @media (max-width: 768px) {
+        .responsive-img {
+            height: auto;
+            /* Automatically adjust the height */
+            width: 100%;
+            /* Make the image take full width of the column */
+            max-width: 100%;
+            /* Ensure it doesn’t exceed column width */
+        }
+
+        .custom-card {
+            flex-direction: column;
+            /* Stack the columns vertically */
+        }
+    }
+
+
+
+    .reviews-section {
+        background-color: #15445c;
+        color: white;
+        padding: 25px 40px 25px 40px;
+        margin-bottom: 0;
+    }
+
+    .reviews-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        /* For responsiveness on smaller screens */
+        gap: 20px;
+    }
+
+    .reviews-title {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        /* Space between items */
+        flex-wrap: wrap;
+    }
+
+    .reviews-title h2 {
+        margin: 0;
+        font-size: 24px;
+        white-space: nowrap;
+    }
+
+    .stars {
+        color: gold;
+        font-size: 20px;
+        white-space: nowrap;
+    }
+
+    .reviews-title p {
+        font-size: 16px;
+        margin: 0;
+        white-space: nowrap;
+    }
+
+    .write-review-btn {
+        padding: 12px 24px;
+        background-color: white;
+        color: #15445c;
+        border: none;
+        border-radius: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+
+    .scroll-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .scroll-wrapper {
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        background-color: #15445c;
+        padding: 20px 0;
+        flex: 1;
+    }
+
+    /* Arrow button styling */
+    .scroll-btn {
+        background-color: rgba(255, 255, 255, 0.8);
+        border: none;
+        font-size: 30px;
+        padding: 10px;
+        cursor: pointer;
+        z-index: 1;
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        border-radius: 50%;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        transition: background-color 0.3s ease;
+    }
+
+    .scroll-btn.left {
+        left: 10px;
+    }
+
+    .scroll-btn.right {
+        right: 10px;
+    }
+
+    .scroll-btn:hover {
+        background-color: #eee;
+    }
+
+    .review-cards {
+        display: flex;
+        flex-wrap: nowrap;
+        padding: 10px 10px 30px;
+        /* Reduced top padding to 10px */
+        background-color: #15445c;
+        gap: 16px;
+    }
+
+    .review-card {
+        background-color: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .review-card img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin-bottom: 10px;
+    }
+
+    .review-stars {
+        color: #FFD700;
+        margin: 10px 0;
+    }
+
+
+    .review-card h4 {
+        margin: 5px 0;
+        font-size: 16px;
+    }
+
+    .review-card .date {
+        color: #666;
+        font-size: 13px;
+    }
+
+    .review-card .review-stars {
+        color: #FFD700;
+        margin: 10px 0;
+    }
+
+    .review-card p {
+        font-size: 14px;
+        color: #444;
+    }
+
+    .google-logo {
+        margin-top: 10px;
+        width: 20px;
+    }
+
+
+
+
+    @media (max-width: 768px) {
+        .custom-card {
+            flex-direction: column;
+            height: auto;
+            margin-top: 0;
+            padding: 20px 10px;
+        }
+
+        .custom-card .col-md-6 {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .custom-card img {
+            width: 100% !important;
+            max-width: 300px;
+            height: auto;
+        }
+
+        .custom-card h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .custom-card .btn {
+            padding: 14px 40px;
+            font-size: 16px;
+        }
+
+        .right-image img {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+        }
+    }
+
+    .left-image img {
+        height: 100px;
+        width: auto;
+        object-fit: contain;
+    }
+
+
+
+    @keyframes scroll-text {
+        0% {
+            transform: translateX(100%);
+        }
+
+        100% {
+            transform: translateX(-100%);
+        }
+    }
+
+
+    /*         .thirukural {
+    position: relative;
+    width: 100%;
+    height: 120px;
+    background-color: #e6f8ff;
+    display: flex;
+    align-items: flex-end;
+    padding: 10px 20px;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+    overflow: hidden;
+} */
+
+    .left-image img {
+        height: 100px;
+        width: auto;
+        object-fit: contain;
+    }
+
+    .scrolling-text {
+        overflow: hidden;
+        white-space: nowrap;
+        position: relative;
+        width: 100%;
+    }
+
+    .scrolling-text span {
+        display: inline-block;
+        font-size: 24px;
+        font-weight: bold;
+        color: #E29D25;
+        will-change: transform;
+        animation: scroll-text 20s linear infinite;
+    }
+
+    .scrolling-text span:hover {
+        animation-play-state: paused;
+    }
+
+    @keyframes scroll-text {
+        0% {
+            transform: translateX(100%);
+        }
+
+        100% {
+            transform: translateX(-100%);
+        }
+    }
+
+
+
+
+
+    .padaippagam-container {
+
+        justify-content: space-between;
+        align-items: center;
+
+        /* background-color: #f3f3f3; */
+
+        flex-wrap: wrap;
+    }
+
+    .logo-side img {
+        width: 150px;
+        height: auto;
+    }
+
+    .center-text {
+        flex: 1;
+        text-align: center;
+    }
+
+    .center-text h2 {
+        font-size: 28px;
+        color: #d48400;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    .book-btn {
+        background-color: #083959;
+        color: white;
+        padding: 10px 30px;
+        font-weight: bold;
+        text-decoration: none;
+        border-radius: 20px;
+    }
+
+    .right-image img {
+        max-width: 100%;
+        width: 500px;
+        height: 400px;
+        border-radius: 10px;
+
+    }
+
+    .slider-container {
+        width: 750px;
+        height: 500px;
+        overflow: hidden;
+        border-radius: 10px;
+        margin: 0 auto;
+    }
+
+    .slider {
+        display: flex;
+        width: calc(750px * 5);
+        /* 5 images */
+        animation: slide 20s infinite;
+    }
+
+    .slider img {
+        width: 750px;
+        height: 500px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    @keyframes slide {
+        0% {
+            transform: translateX(0);
+        }
+
+        20% {
+            transform: translateX(0);
+        }
+
+        25% {
+            transform: translateX(-750px);
+        }
+
+        40% {
+            transform: translateX(-750px);
+        }
+
+        45% {
+            transform: translateX(-1500px);
+        }
+
+        60% {
+            transform: translateX(-1500px);
+        }
+
+        65% {
+            transform: translateX(-2250px);
+        }
+
+        80% {
+            transform: translateX(-2250px);
+        }
+
+        85% {
+            transform: translateX(-3000px);
+        }
+
+        100% {
+            transform: translateX(-3000px);
+        }
+    }
+
+
+
+    .bottom-title {
+        text-align: right;
+        margin-top: 20px;
+        font-size: 30px;
+        font-weight: bold;
+        color: #083959;
+        width: 700px;
+    }
+
+
+    /* Nav Bar for Condition */
+
+    .custom-tabs {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 20px;
+        padding: 8px;
+        background-color: #f3f3f3;
+        border-radius: 70px;
+        margin: 30px auto;
+        max-width: 1270px;
+
+        border: 2px solid;
+    }
+
+    .custom-tab-btn {
+        padding: 20px 60px;
+        /* Bigger button */
+        font-size: 22px;
+        /* Larger text */
+        font-weight: 700;
+        /* Bolder font */
+        border: none;
+        background-color: #f3f3f3;
+        color: #083959;
+        border-radius: 40px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+
+        min-width: 127px;
+        /* Ensures uniform width */
+    }
+
+    .custom-tab-btn:hover {
+        background-color: #005b96;
+        color: white;
+        transform: scale(1.05);
+        /* #083959 */
+    }
+
+    .custom-tab-btn.active {
+        background-color: #083959;
+        color: #fff;
+    }
+
+
+    /* QR Content */
+
+    .feedback-heading {
+        color: #083959;
+        font-weight: bold;
+    }
+
+
+    .qr-card {
+        background-color: #ffffff;
+        border-radius: 30px;
+        border: 2px solid #f9f9fc;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        padding: 30px;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .qr-info-container {
+        display: flex;
+        flex-direction: column;
+        row-gap: 40px;
+        justify-content: center;
+        text-align: left;
+        flex: 1 1 60%;
+        min-width: 250px;
+    }
+
+    .qr-info-container p {
+        color: black;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .qr-section {
+        text-align: center;
+        flex: 1 1 35%;
+        min-width: 200px;
+    }
+
+    .logo-img {
+        height: 85px;
+        width: 230px;
+        margin-bottom: 10px;
+    }
+
+    .subtitle {
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1.3;
+        color: #002b5c;
+    }
+
+    .qr-section p {
+        color: black;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .qr-section img {
+        height: 150px;
+        border: 5px solid #15445c;
+    }
+
+    .qr-section .btn {
+        margin-top: 15px;
+        padding: 10px 20px;
+    }
+
+    /* ✅ MOBILE RESPONSIVE BELOW */
+    @media (max-width: 768px) {
+        .qr-card {
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .qr-info-container,
+        .qr-section {
+            flex: 1 1 100%;
+            text-align: center;
+            min-width: 100%;
+        }
+
+        .logo-img {
+            margin: 0 auto 10px auto;
+            width: 220px;
+        }
+
+        .subtitle {
+            font-size: 22px;
+        }
+
+        .qr-section img {
+            height: 130px;
+        }
+
+        .qr-section .btn {
+            padding: 8px 16px;
+        }
+    }
+
+
+    .pcoded-content {
+        background-image: url("images/bg_partial.png");
+        background-repeat: no-repeat;
+        background-position: top;
+
+    }
+
+
+
+
+
+/* for workspaces list css */
+
+/* .transition-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.transition-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+  color: #15445c;
+  font-weight: 600;
+}
+
+.btn-primary {
+  background-color: #15445c;
+  border-color: #15445c;
+}
+
+.btn-primary:hover {
+  background-color: #0f3445;
+  border-color: #0f3445;
+}
+#buildingContainer {
+  justify-content: center;
+} */
+
+
+
+/* Spacing between cards */
+#buildingContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+   row-gap: 2.5rem; 
+  column-gap: 1rem;
+  padding: 10px;
+}
+
+/* Card design and animation */
+.transition-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border-radius: 1rem;
+  width: 100%;
+  max-width: 350px; /* Prevents cards from stretching too wide */
+}
+
+.transition-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+/* Title and button styles */
+.card-title {
+  color: #15445c;
+  font-weight: 600;
+}
+
+.btn-primary {
+  background-color: #15445c;
+  border-color: #15445c;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: #0f3445;
+  border-color: #0f3445;
+  transform: translateY(-1px);
+}
+
+/* For smaller screens, adjust spacing */
+@media (max-width: 768px) {
+  #buildingContainer {
+    gap: 1.5rem;
+  }
+}
+
+
+
+</style>
+
+<body>
+    <!-- Pre-loader start -->
+    <div class="theme-loader">
+    <div class="ball-scale">
+        <div class='contain'>
+            <div class="ring"><div class="frame"></div></div>
+            <div class="ring"><div class="frame"></div></div>
+            <div class="ring"><div class="frame"></div></div>
+            <div class="ring"><div class="frame"></div></div>
+            <div class="ring"><div class="frame"></div></div>
+            <div class="ring"><div class="frame"></div></div>
+            <div class="ring"><div class="frame"></div></div>
+            <div class="ring"><div class="frame"></div></div>
+            <div class="ring"><div class="frame"></div></div>
+            <div class="ring"><div class="frame"></div></div>
+        </div>
+    </div>
+</div>
+    <!-- Pre-loader end -->
+    <div id="pcoded" class="pcoded">
+        <div class="pcoded-container">
+            <!-- Menu header start -->
+            <nav class="navbar header-navbar pcoded-header">
+    <div class="navbar-wrapper">
+
+        <div class="navbar-logo" style="background-color:#15455D;width:75%;">
+            <a class="mobile-menu" id="mobile-collapse" href="#!">
+                <i class="fa fa-navicon"  style="margin-right: 335px;"></i>
+            </a>
+            <a href="/muthalvarpadaippagam" style="width:40px;height:40px;margin-bottom:3px;margin-right:10px;">
+                <img class="img-fluid" style="border-radius:5px;width:80%;" src="images/padaippagam.png" alt="Theme-Logo">
+            </a>
+            <a>
+               <!-- <p style="font-size: 12px;margin:unset;">Greater Chennai Corporation
+                </p>-->
+                <p style="font-size: 20px;margin-bottom:4px;">
+                    முதல்வர் படைப்பகம்
+                </p>
+            </a>
+            <a class="mobile-options">
+                <i class="feather icon-more-horizontal"></i>
+            </a>
+        </div>
+
+        <div class="navbar-container container-fluid">
+            <ul class="nav-left">
+                <li>
+
+                </li>
+            </ul>
+            <ul class="nav-right">
+                <li>
+                    <a href="#"  style="width:30px;height:30px;margin-bottom:10px;margin-right:2px;">
+                        <img class="img-fluid" style="width:40px;height:40px;background-color:white;border-radius:5px;"  src="images/logo.png" alt="Theme-Logo">
+                    </a>
+                    <a href="#" style="margin-right:2px;">
+                        <img src="images/VCVT.png" alt="First Image" style="width:40px;height:40px;background-color:white;border-radius:5px;">
+                    </a>
+                    <!-- <a href="#" style="margin-right:2px;">
+                        <img src="images/CMDA.png" alt="Second Image" style="width:40px;height:40px;background-color:white;border-radius:5px;">
+                    </a> -->
+                    <a  onclick="javascript:toggleFullScreen()" style="color:white;">
+                        <i class="feather icon-maximize full-screen" style="font-size:20px;"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+            <!-- Menu header end -->
+            <div class="pcoded-main-container">
+                <nav class="pcoded-navbar">
+    <div class="pcoded-inner-navbar">
+        <ul class="pcoded-item pcoded-left-item">
+            <li class="pcoded-hasmenu">
+                <a href="/muthalvarpadaippagam">
+                    <span class="pcoded-micon"><i class="feather icon-home"></i></span>
+                    <span class="pcoded-mtext">Home</span>
+                    <span class="pcoded-mcaret"></span>
+                </a>
+            </li>
+            <!-- <li class="pcoded-hasmenu">
+                <a href="#">
+                    <span class="pcoded-micon"><i class="fa fa-list-alt"></i></span>
+                    <span class="pcoded-mtext">Booking Details</span>
+                    <span class="pcoded-mcaret"></span>
+                </a>
+            </li> -->
+            <li class="pcoded-hasmenu">
+                <a href="/muthalvarpadaippagam/bookinghistory">
+                    <span class="pcoded-micon"><i class="fa fa-exclamation-circle"></i></span>
+                    <span class="pcoded-mtext">Booking History</span>
+                    <span class="pcoded-mcaret"></span>
+                </a>
+            </li>
+            <li class="pcoded-hasmenu">
+                <a href="/muthalvarpadaippagam/registercomplaint">
+                    <span class="pcoded-micon"><i class="fa fa-exclamation-circle"></i></span>
+                    <span class="pcoded-mtext">Register Complaint</span>
+                    <span class="pcoded-mcaret"></span>
+                </a>
+            </li>
+          <!--  <li class="pcoded-hasmenu">
+                <a href="/tc">
+                <span class="pcoded-micon"><i class="fa fa-exclamation-circle"></i></span>
+                <span class="pcoded-mtext">Terms & Conditions</span>
+                <span class="pcoded-mcaret"></span>
+                </a>
+            </li>-->
+            <!--
+            <li class="pcoded-hasmenu">
+                <a href="javascript:void(0)">
+                    <span class="pcoded-micon"><i class="ti-user"></i></span>
+                    <span class="pcoded-mtext">Profile</span>
+                    <span class="pcoded-mcaret"></span>
+                </a>
+                <ul class="pcoded-submenu">
+                    <li class=" ">
+                        <a href="#" data-i18n="nav.extra-components.session-timeout">
+                            <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
+                            <span class="pcoded-mtext">Settings</span>
+                            <span class="pcoded-mcaret"></span>
+                        </a>
+                    </li>
+                    <li class=" ">
+                        <a href="#" data-i18n="nav.extra-components.session-idle-timeout">
+                            <span class="pcoded-micon"><i class="ti-angle-right"></i></span>
+                            <span class="pcoded-mtext">Login</span>
+                            <span class="pcoded-mcaret"></span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            -->
+        </ul>
+        <ul class="pcoded-item pcoded-right-item">
+        <li class="pcoded-hasmenu">
+            <a href="/muthalvarpadaippagam/officiallogin">
+                <span class="pcoded-micon"><i class="ti-user" ></i></span>
+                <span class="pcoded-mtext">Official Login</span>
+                <span class="pcoded-mcaret"></span>
+            </a>
+        </li>
+        </ul>
+    </div>
+</nav>
+                <div class="pcoded-content">
+                    <div class="pcoded-inner-content">
+                        <!-- Main-body start -->
+                        <div class="main-body">
+                            <div class="page-wrapper">
+                                <div class="page-body" style="padding-top: 5%;">
+                                    <!-- Page-header end -->
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="custom-card row">
+
+
+                                                <div class="col-md-6"
+                                                    style="text-align: center;justify-content: center;">
+                                                    <img src="images/mplogo.png"
+                                                        style="width: 300px;margin-top: 25px;margin-bottom:5px;">
+                                                    <h2 style="font-weight: 700;">MUTHALVAR PADAIPPAGAM</h2>
+                                                    <p style="color:#E29D25;padding-top:1px;margin-bottom: 20px;">Co -
+                                                        Working Space | Learning Centre</p>
+                                                    <div class="row"
+                                                        style="text-align: center;justify-content: center;margin-bottom: 10px;">
+                                                        <button class="btn"
+                                                            style="border-radius: 20px;background-color: #15445c;color: white;"
+                                                            onclick="scrollToContainer()">Book Now</button>
+                                                        <!-- <button class="btn"
+                                                            style="border-radius: 20px;background-color:#15445c;color: white;"
+                                                            onclick="scrollToPricingContainer()">Pricing
+                                                            Details</button> -->
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="col-md-6">
+                                                    <div class="padaippagam-container">
+
+                                                        <div class="right-image">
+
+
+                                                            <img src="images/homelogo.png" alt="Office Room">
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- <div class="bottom-title">MUTHALVAR PADAIPPAGAM</div> -->
+                                                </div>
+
+                                                <div class="scrolling-text">
+                                                    <span>Loading announcement...</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                    <!-- 🔹 Working Space List Section -->
+<div class="container-fluid my-5" id="buildingListSection" style="margin: 0px;">
+  <h2 class="text-center mb-4 fw-bold" style="color:#15445c;">
+    Available Locations
+  </h2>
+
+  <!-- Responsive grid -->
+  <div  id="buildingContainer">
+    <!-- Cards loaded dynamically here -->
+  </div>
+</div>
+
+
+<br>
+
+
+                                    <!-- Tab Buttons -->
+                                  
+
+
+
+<br>
+
+                                    
+                                </div>
+
+
+                                <!-- QR Container -->
+                                <div class="container my-5">
+                                    <div class="text-center mb-4">
+                                        <h2 class="feedback-heading">Need Your Feedback</h2>
+                                    </div>
+
+
+                                    <div class="row justify-content-center" id="qrContainerSection">
+                                        <div class="col-md-10">
+                                            <div class="qr-card">
+                                                <!-- Left Side: Info -->
+                                                <div class="qr-info-container">
+                                                    <img src="images/chnlogo.jpeg" alt="GCC Logo" class="logo-img">
+                                                    <h3 class="subtitle">Hi Folks!,<br>Need Your Precious Feedback.</h3>
+                                                    <!-- <p>hi folks,<br>need your precious feedback</p> -->
+                                                </div>
+
+                                                <!-- Right Side: QR + Button -->
+                                                <div class="qr-section">
+                                                    <p>Scan QR Code below with your mobile</p>
+                                                    <img src="images/qrscan.jpeg" alt="QR Code">
+                                                    <div>
+                                                        <a href="https://ee.kobotoolbox.org/x/a9bm75Uf" target="_blank"
+                                                            class="btn btn-primary">Click Here</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Main-body end -->
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="reviews-section">
+                    <div class="reviews-header">
+                        <div class="reviews-title">
+                            <h2>Our Google Reviews</h2>
+                            <div class="stars">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                            <p>4.9 Stars Out Of 5 Reviews</p>
+                        </div>
+                        <a href="https://www.google.com/maps/place/Muthalvar+Padaippagam/@13.1119311,80.2299216,17z/data=!4m8!3m7!1s0x3a5265006823c61b:0x4ebe985b95642103!8m2!3d13.1119259!4d80.2324965!9m1!1b1!16s%2Fg%2F11y89gzc0z?entry=ttu"
+                            target="_blank" rel="noopener noreferrer" class="write-review-btn">
+                            Write A Review
+                        </a>
+
+                    </div>
+                </div>
+
+
+                <div class="container py-4">
+                    <div class="row justify-content-center" id="review-cards-container">
+                        <!-- Reviews injected here -->
+                    </div>
+                </div>
+
+
+
+                <!--  Latest News  -->
+
+
+
+                <!--  <latestnews th:replace="~{fragments/latestnews :: latestnews}"></latestnews> -->
+
+                <footer class=" text-center text-white" style="background-color:rgb(21,69,93);padding: 0px;margin-top: 25px;">
+    <!-- Grid container -->
+    <div class="container p-4">
+        <!-- Section: Text -->
+        <section >
+            <p>
+                Muthalvar Padaippagam Booking Portal
+            </p>
+            <p>
+                "The Bribery is against the Law. The Complaints about corruption may be sent to the Directorate of vigilance and Anti-Corruption, Chennai-16"
+            </p>
+            <p> Designed and Developed by IT Cell, Greater Chennai Corporation. Coded by Bonton Softwares Pvt Ltd.</p>
+            <p>
+                &copy; <span style="color: white;" data-toggle="year-copy"></span>2024 Greater Chennai Corporation
+            </p>
+        </section>
+        <!-- Section: Text -->
+    </div>
+    <!-- Grid container -->
+</footer>
+
+                <div class="modal fade" id="visitTourModal" tabindex="-1" aria-labelledby="visitTourModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="visitTourModalLabel">Virtual Tour</h5>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                            </div>
+                            <div class="modal-body">
+                                <iframe id="visitTourIframe" src=""
+                                    style="width: 100%; height: 500px; border: none;"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal fade" id="visitTourModal1" tabindex="-1" aria-labelledby="visitTourModalLabel1"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="visitTourModalLabel1">Virtual Tour </h5>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                            </div>
+                            <div class="modal-body">
+                                <iframe id="visitTourIframe1" src=""
+                                    style="width: 100%; height: 500px; border: none;"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+        <script type="text/javascript" src="files/bower_components/jquery/js/jquery.min.js"></script><script type="text/javascript" src="files/bower_components/jquery-ui/js/jquery-ui.min.js"></script><script type="text/javascript" src="files/bower_components/popper.js/js/popper.min.js"></script><script type="text/javascript" src="files/bower_components/bootstrap/js/bootstrap.min.js"></script><script type="text/javascript" src="files/bower_components/jquery-slimscroll/js/jquery.slimscroll.js"></script><script type="text/javascript" src="files/bower_components/modernizr/js/modernizr.js"></script><script type="text/javascript" src="files/bower_components/modernizr/js/css-scrollbars.js"></script><script type="text/javascript" src="files/assets/pages/prism/custom-prism.js"></script><script type="text/javascript" src="files/bower_components/i18next/js/i18next.min.js"></script><script type="text/javascript" src="files/bower_components/i18next-xhr-backend/js/i18nextXHRBackend.min.js"></script><script type="text/javascript" src="files/bower_components/i18next-browser-languagedetector/js/i18nextBrowserLanguageDetector.min.js"></script><script type="text/javascript" src="files/bower_components/jquery-i18next/js/jquery-i18next.min.js"></script><script src="files/assets/js/pcoded.min.js"></script><script src="files/assets/js/menu/menu-hori-fixed.js"></script><script src="files/assets/js/jquery.mCustomScrollbar.concat.min.js"></script><script type="text/javascript" src="files/assets/js/script.js"></script><script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-23581568-13"></script><script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-23581568-13');
+</script>
+        <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+    </div>
+</body>
+<script>
+
+    $(document).ready(function () {
+        // On click of a tab button
+        $('.custom-tab-btn').on('click', function () {
+            const cid = $(this).data('cid');
+
+            // Update active class on tabs
+            $('.custom-tab-btn').removeClass('active');
+            $(this).addClass('active');
+
+            // Fetch space content via AJAX
+            $.get('/muthalvarpadaippagam/home/space', { cid: cid }, function (data) {
+                $('#space-content').html(data); // Inject the returned HTML
+            });
+        });
+    });
+
+    fetch('/muthalvarpadaippagam/book/api/marquee')
+        .then(response => response.json())
+        .then(data => {
+            const marqueeContainer = document.querySelector(".scrolling-text span");
+            if (marqueeContainer && data.content) {
+                marqueeContainer.textContent = data.content;
+            }
+        })
+        .catch(error => console.error("Failed to load marquee:", error));
+
+
+    fetch('/muthalvarpadaippagam/book/api/reviews')
+        .then(res => res.json())
+        .then(data => {
+            const result = data.result;
+            const reviews = result.reviews.slice(0, 5); // Only first 5
+            const rating = result.rating;
+
+            // Update title and summary
+            document.querySelector(".reviews-title h2").innerText = "Our Google Reviews";
+            document.querySelector(".reviews-title p").innerText = `${rating} Stars Out Of ${reviews.length} Reviews`;
+
+            const starContainer = document.querySelector(".reviews-title .stars");
+            starContainer.innerHTML = '';
+            for (let i = 0; i < Math.floor(rating); i++) {
+                starContainer.innerHTML += `<i class="fas fa-star"></i>`;
+            }
+
+            const container = document.getElementById("review-cards-container");
+            reviews.forEach(r => {
+                const starsHTML = '<i class="fas fa-star"></i>'.repeat(r.rating);
+
+                const reviewHTML = `
+        <div class="col-md-6 mb-4">
+          <div class="review-card h-100">
+            <img src="${r.profile_photo_url}" alt="${r.author_name}"
+                 onerror="this.src='https://www.gravatar.com/avatar/?d=mp&f=y';">
+            <h4>${r.author_name}</h4>
+            <div class="date">${r.relative_time_description}</div>
+            <div class="review-stars">${starsHTML}</div>
+            <p>${r.text}</p>
+          </div>
+        </div>
+      `;
+                container.insertAdjacentHTML("beforeend", reviewHTML);
+            });
+        });
+
+
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const deskSpaceBtn = document.getElementById('deskSpaceBtn');
+        const conferenceHallBtn = document.getElementById('conferenceHallBtn');
+        const readingZoneBtn = document.getElementById('readingZoneBtn');
+
+        const deskSpaceCards = document.querySelectorAll('.desk-space-card');
+        const conferenceHallCards = document.querySelectorAll('.conference-hall-card');
+        const readingZoneCard = document.getElementById('readingZoneCard');
+
+        deskSpaceBtn.addEventListener('click', () => {
+            showCards(deskSpaceCards);
+            hideCards(conferenceHallCards);
+            hideCard(readingZoneCard);
+            updateActiveTab(deskSpaceBtn);
+        });
+
+        conferenceHallBtn.addEventListener('click', () => {
+            hideCards(deskSpaceCards);
+            showCards(conferenceHallCards);
+            hideCard(readingZoneCard);
+            updateActiveTab(conferenceHallBtn);
+        });
+
+        readingZoneBtn.addEventListener('click', () => {
+            hideCards(deskSpaceCards);
+            hideCards(conferenceHallCards);
+            showCard(readingZoneCard);
+            updateActiveTab(readingZoneBtn);
+        });
+
+        function showCards(cards) {
+            cards.forEach(card => {
+                card.style.display = 'block';
+            });
+        }
+
+        function hideCards(cards) {
+            cards.forEach(card => {
+                card.style.display = 'none';
+            });
+        }
+
+        function showCard(card) {
+            card.style.display = 'block';
+        }
+
+        function hideCard(card) {
+            card.style.display = 'none';
+        }
+
+        function updateActiveTab(activeTab) {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            activeTab.classList.add('active');
+        }
+    });
+
+    const bookNowButtons = document.querySelectorAll('.book-now-btn');
+    bookNowButtons.forEach(button => {
+        button.addEventListener('click', (event) => {
+            alert('Booking process initiated for: ' + event.target.parentElement.querySelector('h2').innerText);
+            // You can replace this alert with your booking logic
+        });
+    });
+
+    function gotoBooking(buildingId, categoryId) {
+        window.location.href = "/muthalvarpadaippagam/book?buildingId=" + buildingId + "&categoryId=" + categoryId;
+    }
+
+    //to scroll down the content
+    function scrollToContainer() {
+        document.getElementById("buildingListSection").scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function scrollToPricingContainer() {
+        document.getElementById("pricingContainerSection").scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+
+</script>
+<script>
+    // function showTour(buildingId, categoryId) {
+    //     console.log("Visit Tour Triggered - Bid:", buildingId, "Cid:", categoryId);
+
+    //     let url = "";
+    //     let modalId = "";
+
+    //     // Ensure categoryId is parsed correctly
+    //     categoryId = parseInt(categoryId);
+
+    //     // Determine the URL and modal ID based on the categoryId
+    //     if (categoryId === 1) {
+    //         url = "https://my.matterport.com/show/?m=gKmjwFBqnwa";
+    //         modalId = "visitTourModal";
+    //     }
+    //     else if (categoryId === 2) {
+    //         url = "https://my.matterport.com/show/?m=2n8cHdtUfs8";
+    //         modalId = "visitTourModal";
+    //     }
+    //     else if (categoryId === 3) {
+    //         url = "https://my.matterport.com/show/?m=2n8cHdtUfs8";
+    //         modalId = "visitTourModal1";
+    //     } else {
+    //         alert("No tour available for this category."); // Fallback for other cases
+    //         return;
+    //     }
+
+    //     console.log("Resolved URL:", url, "Modal ID:", modalId);
+
+    //     // Dynamically set the iframe source
+    //     const iframeId = modalId === "visitTourModal" ? "visitTourIframe" : "visitTourIframe1";
+    //     document.getElementById(iframeId).src = url;
+
+    //     // Open the appropriate modal
+    //     const modalElement = document.getElementById(modalId);
+    //     const modalInstance = new bootstrap.Modal(modalElement);
+    //     modalInstance.show();
+
+    //     console.log("Modal Displayed:", modalId);
+    // }
+
+    function showTourPopup1(link) {
+        const iframe = document.getElementById('visitTourIframe1');
+        iframe.src = link;
+
+        // Show the modal
+        const modal = new bootstrap.Modal(document.getElementById('visitTourModal1'));
+        modal.show();
+    }
+
+
+
+
+
+
+$(document).ready(function () {
+  loadBuildings();
+});
+
+// function loadBuildings() {
+//   $.ajax({
+//     url: '/muthalvarpadaippagam/api/details',
+//     type: 'GET',
+//     dataType: 'json',
+//     success: function (data) {
+//       console.log(data);
+//       $('#buildingContainer').empty();
+
+//       if (!data || data.length === 0) {
+//         $('#buildingContainer').html('<p class="text-center text-muted">No buildings available.</p>');
+//         return;
+//       }
+
+//       // Group by bid
+//       const grouped = {};
+//       data.forEach(item => {
+//         if (!grouped[item.bid]) {
+//           grouped[item.bid] = item;
+//         }
+//       });
+
+//       // Generate building cards
+//       $.each(grouped, function (id, b) {
+//         const imageUrl = b.image_url || '/assets/img/default-building.jpg';
+
+//          const html = `
+//             <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex">
+//             <div class="card shadow-sm border-0 rounded-4 flex-fill h-100 transition-card">
+//                 <div class="ratio ratio-16x9 rounded-top-4 overflow-hidden">
+//                 <img src="https://gccservices.in/gcc/assets/images/logo.png" 
+//                     class="card-img-top" 
+//                     alt="${b.name || 'Building Image'}" 
+//                     style="object-fit: cover;">
+//                 </div>
+
+//                 <div class="card-body text-center d-flex flex-column justify-content-between">
+//                 <div>
+//                     <h5 class="card-title text-truncate mb-2" 
+//                         title="${b.name || 'Unnamed Building'}">
+//                     ${b.name || 'Unnamed Building'}
+//                     </h5>
+//                     <p class="card-text small text-muted mb-3">
+//                     <span>District: ${b.district || '-'}</span><br>
+//                     <span>Pincode: ${b.pincode || '-'}</span>
+//                     </p>
+//                 </div>
+
+//                 <button class="btn btn-primary w-100 mt-auto fw-semibold" 
+//                         onclick="showSpaceTabs(${b.bid}, 2)">
+//                     View Details
+//                 </button>
+//                 </div>
+//             </div>
+//             </div>
+//         `;
+//         $('#buildingContainer').append(html);
+//         });
+//     },
+//     error: function (xhr, status, error) {
+//       console.error("Error fetching building data:", error);
+//       $('#buildingContainer').html('<p class="text-center text-danger">Failed to load buildings.</p>');
+//     }
+//   });
+// }
+
+
+function loadBuildings() {
+  $.ajax({
+    url: '/muthalvarpadaippagam/api/details',
+    type: 'GET',
+    dataType: 'json',
+    success: function (data) {
+      //console.log(data);
+      $('#buildingContainer').empty();
+
+      if (!data || data.length === 0) {
+        $('#buildingContainer').html('<p class="text-center text-muted">No buildings available.</p>');
+        return;
+      }
+
+      // ✅ Group by bid, and capture cid
+      const grouped = {};
+      data.forEach(item => {
+        if (!grouped[item.bid]) {
+          grouped[item.bid] = {
+            bid: item.bid,
+            name: item.name,
+            district: item.district,
+            pincode: item.pincode,
+            area: item.area,
+            cid: item.cid,  // ✅ capture the category id
+            display_name: item.display_name,
+            building_image_url: item.building_image_url,
+            address: item.address
+          };
+        }
+      });
+
+      // ✅ Generate building cards
+      $.each(grouped, function (id, b) {
+        const imageUrl = b.building_image_url;
+
+        const html = `
+         
+            <div class="card shadow-sm border-0 rounded-4 flex-fill h-100 transition-card">
+              <div class="ratio ratio-16x9 rounded-top-4 overflow-hidden">
+                        <img src="${imageUrl}" 
+                        class="card-img-top" 
+                        alt="${b.imageUrl || 'Building Image'}" 
+                        style="object-fit: cover;">
+                    </div>
+
+                <div class="card-body text-center d-flex flex-column justify-content-between">
+                    <div>
+                    <h4 class="card-title text-truncate mb-3" 
+                        title="${b.name || 'Unnamed Building'}">
+                        ${b.name || 'Unnamed Building'}
+                    </h4>
+                    <p class="card-text  text-muted mb-3" style="font-size:1.1rem; line-height:1.5;">
+                        <!--<span>District: ${b.district || '-'}</span><br>
+                          <span>Area: ${b.area || '-'}</span><br>
+                        <span>Pincode: ${b.pincode || '-'}</span><br>-->
+                         <span>Address: ${b.address || '-'}</span><br>
+                        <!-- <span>Categories: ${b.display_name || '-'}</span> -->
+                    </p>
+                </div>
+
+                <!--<button class="btn btn-primary w-100 mt-auto fw-semibold" 
+                        onclick="showSpaceTabs(${b.bid}, ${b.cid})">
+                  View Details
+                </button>-->
+                <button class="btn w-100 mt-auto fw-semibold"
+        style="background-color:#15455D; color:white; border:none;"
+        onmouseover="this.style.backgroundColor='#0F3447'"
+        onmouseout="this.style.backgroundColor='#15455D'"
+        onclick="showSpaceTabs(${b.bid}, ${b.cid})">
+    View Details
+</button>
+              </div>
+            </div>
+          
+        `;
+        $('#buildingContainer').append(html);
+      });
+    },
+    error: function (xhr, status, error) {
+      console.error("Error fetching building data:", error);
+      $('#buildingContainer').html('<p class="text-center text-danger">Failed to load buildings.</p>');
+    }
+  });
+}
+
+
+// function showSpaceTabs(bid, cid) {
+//   //console.log("Redirecting with bid:", bid, "and cid:", cid);
+//   window.location.href = `/muthalvarpadaippagam/home?bid=${bid}&cid=${cid}`;
+// }
+
+
+
+
+function showSpaceTabs(bid, cid) {
+
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = "/muthalvarpadaippagam/home";
+
+    form.appendChild(hidden("bid", bid));
+    form.appendChild(hidden("cid", cid));
+
+    document.body.appendChild(form);
+    form.submit();
+}
+
+function hidden(name, value) {
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = name;
+    input.value = value;
+    return input;
+}
+
+
+
+
+// ✅ Redirect function
+// function showSpaceTabs(bid, cid = 2) {
+//   console.log("Redirecting with bid:", bid, "and cid:", cid);
+//   // Redirect to home page with parameters
+//   window.location.href = `/muthalvarpadaippagam/home?bid=${bid}&cid=${cid}`;
+// }
+
+
+
+</script>
+
+</html>

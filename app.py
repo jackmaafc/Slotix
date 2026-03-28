@@ -94,8 +94,16 @@ def booking_flow(session_id, slot_key, location, date, name, phone, num_seats, r
         rjson = resp.json()
 
         if rjson.get("status") != "SUCCESS":
-            msg = rjson.get("message", str(rjson))
-            update_slot(session_id, slot_key, status="error", error=msg)
+            raw_msg = rjson.get("message") or rjson.get("error") or str(rjson)
+            # Normalise GCC's vague errors into user-facing messages
+            raw_lower = raw_msg.lower()
+            if any(k in raw_lower for k in ("slot full", "seat", "capacity", "no seats", "not available")):
+                user_msg = "Slot Full — no seats available for this date/time."
+            elif "internal server error" in raw_lower or "exception" in raw_lower:
+                user_msg = "GCC server error — try a different date or slot."
+            else:
+                user_msg = raw_msg
+            update_slot(session_id, slot_key, status="error", error=user_msg)
             return
 
         temp_book_id = rjson["tempBookId"]
@@ -122,6 +130,7 @@ def booking_flow(session_id, slot_key, location, date, name, phone, num_seats, r
         amount_paise = ojson["amount"]
 
         # Ready for payment — frontend will open Razorpay checkout.js
+        # Also persist order_id and amount_paise so /confirm can use them later
         update_slot(session_id, slot_key,
                     status="ready_to_pay",
                     order_id=order_id,
@@ -206,13 +215,24 @@ def status(session_id):
 
 
 # ─── Confirm payment (called by frontend after Razorpay success) ─────────────
+#
+# After Razorpay payment, the frontend sends us:
+#   razorpay_payment_id, razorpay_order_id, razorpay_signature
+# We then call GCC's /book/api/Confirm with the same payload the real GCC
+# website sends, so the booking is finalised in GCC's system and the user
+# receives a WhatsApp confirmation.
+# ─────────────────────────────────────────────────────────────────────────────
 
 @app.route("/confirm/<session_id>/<slot_id>", methods=["POST"])
 def confirm_payment(session_id, slot_id):
     """Called by frontend after Razorpay checkout completes successfully."""
     data = request.get_json(force=True)
-    payment_id = data.get("razorpay_payment_id", "")
+    payment_id  = data.get("razorpay_payment_id", "")
+    order_id    = data.get("razorpay_order_id", "")
+    # signature  = data.get("razorpay_signature", "")  # not used by GCC's Confirm API
 
+    # Read the slot to get tempBookId and amount from the existing session
+    slot_snap = None
     with sessions_lock:
         session = sessions.get(session_id)
         if not session:
@@ -220,10 +240,132 @@ def confirm_payment(session_id, slot_id):
         slot = session["slots"].get(str(slot_id))
         if not slot:
             return jsonify({"error": "Slot not found"}), 404
-        slot["status"] = "paid"
-        slot["payment_id"] = payment_id
+        import copy as _copy
+        slot_snap = _copy.deepcopy(slot)
 
-    return jsonify({"status": "ok"})
+    temp_book_id   = slot_snap.get("tempBookId")
+    amount_paise   = slot_snap.get("amount_paise", 0)
+    # GCC Confirm API expects amount in rupees (integer), not paise
+    amount_rupees  = int(amount_paise) // 100 if amount_paise else 0
+
+    # If we don't have a stored order_id, fall back to whatever the frontend sent
+    stored_order_id = slot_snap.get("order_id") or order_id
+
+    # ── Call GCC's Confirm API ────────────────────────────────────────────────
+    booking_id = None
+    gcc_error  = None
+    if temp_book_id:
+        try:
+            confirm_payload = {
+                "payment_id": payment_id,
+                "order_id":   stored_order_id,
+                "status":     "paid",
+                "id":         temp_book_id,
+                "amount":     amount_rupees,
+            }
+            gcc_confirm_headers = dict(GCC_HEADERS)
+            gcc_confirm_headers["content-type"] = "application/json"
+
+            gcc_resp = http_requests.post(
+                f"{GCC_BASE}/book/api/Confirm",
+                json=confirm_payload,
+                headers=gcc_confirm_headers,
+                timeout=30,
+            )
+            gcc_resp.raise_for_status()
+
+            # GCC returns the booking_id as a plain value (string/int) or "error"
+            try:
+                gcc_data = gcc_resp.json()
+            except Exception:
+                gcc_data = gcc_resp.text.strip()
+
+            if gcc_data and gcc_data != "error":
+                booking_id = str(gcc_data)
+            else:
+                gcc_error = "GCC returned an error on confirmation — check GCC account."
+
+        except Exception as e:
+            gcc_error = f"GCC Confirm call failed: {e}"
+    else:
+        gcc_error = "Missing tempBookId — cannot confirm with GCC."
+
+    # ── Update local session state ────────────────────────────────────────────
+    with sessions_lock:
+        session = sessions.get(session_id)
+        if session:
+            slot = session["slots"].get(str(slot_id))
+            if slot:
+                slot["status"]       = "confirmed" if booking_id else "paid"
+                slot["payment_id"]   = payment_id
+                slot["booking_id"]   = booking_id
+                slot["gcc_error"]    = gcc_error
+
+    return jsonify({
+        "status":     "ok",
+        "booking_id": booking_id,
+        "gcc_error":  gcc_error,
+    })
+
+
+# ─── Slot availability (real-time seats from GCC) ─────────────────────────────
+
+@app.route("/slots", methods=["GET"])
+def get_slot_availability():
+    """
+    Fetches available seat counts for a specific location, date, and slot.
+    Query params: location (key), date (YYYY-MM-DD), slot_id (int)
+    """
+    location_key = request.args.get("location", "kolathur")
+    date         = request.args.get("date", "")
+    slot_id      = request.args.get("slot_id", "")
+
+    if location_key not in LOCATIONS:
+        return jsonify({"error": f"Invalid location. Choose: {list(LOCATIONS.keys())}"}), 400
+    if not date:
+        return jsonify({"error": "date is required (YYYY-MM-DD)"}), 400
+    if not slot_id:
+        return jsonify({"error": "slot_id is required"}), 400
+
+    loc = LOCATIONS[location_key]
+
+    try:
+        avail_resp = http_requests.post(
+            f"{GCC_BASE}/book/api/getAvailability",
+            data={
+                "catId":    loc["catId"],
+                "buildId":  loc["buildId"],
+                "subId":    loc["subId"],
+                "fromDate": date,
+                "toDate":   date,
+                "slots[]": slot_id,
+            },
+            headers=GCC_HEADERS,
+            timeout=15,
+        )
+        avail_resp.raise_for_status()
+        avail_json = avail_resp.json()
+
+        # GCC typically returns something like:
+        # [{"slotId": 1, "availableSeats": 12, "totalSeats": 20, ...}]
+        # Normalise into a consistent structure regardless of GCC's exact schema
+        seats = None
+        if isinstance(avail_json, list) and len(avail_json) > 0:
+            first = avail_json[0]
+            seats = first.get("availableSeats") or first.get("available") or first.get("seatsAvailable")
+        elif isinstance(avail_json, dict):
+            seats = avail_json.get("availableSeats") or avail_json.get("available")
+
+        return jsonify({
+            "location":        location_key,
+            "date":            date,
+            "slot_id":         slot_id,
+            "available_seats": seats,
+            "raw":             avail_json,
+        })
+
+    except Exception as e:
+        return jsonify({"error": f"Failed to fetch availability: {e}"}), 502
 
 
 # ─── Entry point ──────────────────────────────────────────────────────────────
