@@ -11,9 +11,22 @@ CORS(app)
 # ─── Configuration ────────────────────────────────────────────────────────────
 
 LOCATIONS = {
-    "kolathur":      {"buildId": 1, "catId": 1,  "subId": 1,  "label": "Kolathur"},
-    "periyar_nagar": {"buildId": 2, "catId": 4,  "subId": 8,  "label": "Periyar Nagar"},
-    "jawahar_nagar": {"buildId": 4, "catId": 7,  "subId": 13, "label": "Jawahar Nagar"},
+    "kolathur":      {"buildId": 1,  "catId": 1,  "subId": 1,  "label": "Kolathur",      "address": "Jeganathan Street, Agaram, Chennai\u00a0600082"},
+    "periyar_nagar": {"buildId": 2,  "catId": 4,  "subId": 8,  "label": "Periyar Nagar", "address": "Karthikeyan Road, Periyar Nagar, Chennai\u00a0600082"},
+    "jawahar_nagar": {"buildId": 4,  "catId": 7,  "subId": 13, "label": "Jawahar Nagar", "address": "1/26 First Circular Road, Jawahar Nagar, Chennai\u00a0600082"},
+    "kondithope":    {"buildId": 3,  "catId": 5,  "subId": 9,  "label": "Kondithope",    "address": "4/27, Peddanaickenpet, Amman Kovil Street, George Town, Chennai"},
+    "erukenchery":   {"buildId": 5,  "catId": 8,  "subId": 14, "label": "Erukenchery",   "address": "No.45, Krishnamurthy Salai, Chennai\u00a0600118"},
+    "sevenwells":    {"buildId": 6,  "catId": 9,  "subId": 15, "label": "Sevenwells",    "address": "Branch Library, Shanmugam Street, Sevenwells Salai, Chennai\u00a0600001"},
+    "tondiarpet":    {"buildId": 7,  "catId": 10, "subId": 16, "label": "Tondiarpet",    "address": "Mayor Basudev Street No.38, Old Washermenpet, Chennai\u00a0600021"},
+    "purasaiwalkam": {"buildId": 8,  "catId": 11, "subId": 17, "label": "Purasaiwalkam", "address": "No.1, Rattler Street, Chennai\u00a0600112"},
+    "washermanpet":  {"buildId": 9,  "catId": 12, "subId": 18, "label": "Washermanpet",  "address": "Sinthanai Sirpi Singaravelar Library, Kallarai Salai, Royapuram, Chennai\u00a0600013"},
+    "triplicane":    {"buildId": 10, "catId": 13, "subId": 19, "label": "Triplicane",    "address": "No.204, Janibatsha Street, Pudhupakkam, Chennai\u00a0600014"},
+    "pulianthope":   {"buildId": 11, "catId": 14, "subId": 20, "label": "Pulianthope",   "address": "Bakthavatchalam Park, No.171, Demands Road, Chennai\u00a0600012"},
+    "ashok_nagar":   {"buildId": 12, "catId": 15, "subId": 21, "label": "Ashok Nagar",   "address": "No.35, 11th Street, Ashok Nagar, Chennai\u00a0600083"},
+    "mangalapuram":  {"buildId": 13, "catId": 17, "subId": 25, "label": "Mangalapuram",  "address": "Address not yet confirmed"},
+    "otteri":        {"buildId": 14, "catId": 18, "subId": 26, "label": "Otteri",        "address": "No.2, Subburayan Street, Chennai\u00a0600012"},
+    "kannikapuram":  {"buildId": 15, "catId": 19, "subId": 27, "label": "Kannikapuram",  "address": "Venkatesapuram New Colony, Chennai\u00a0600012"},
+    "ra_puram":      {"buildId": 16, "catId": 20, "subId": 28, "label": "RA Puram",      "address": "No.33-A, 4th Avenue Main Road, Chennai\u00a0600028"},
 }
 
 SLOT_LABELS = {
@@ -159,7 +172,7 @@ def health():
 @app.route("/locations", methods=["GET"])
 def get_locations():
     return jsonify([
-        {"key": k, "label": v["label"]}
+        {"key": k, "label": v["label"], "address": v.get("address", "")}
         for k, v in LOCATIONS.items()
     ])
 

@@ -619,6 +619,95 @@
         padding: 22px 18px;
       }
     }
+
+    /* ─── Custom Location Dropdown ───────────────────────────────── */
+    .loc-wrap { position: relative; }
+
+    .loc-trigger {
+      width: 100%;
+      padding: 14px 16px;
+      padding-right: 40px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: border-color 0.25s, box-shadow 0.25s;
+      user-select: none;
+    }
+    .loc-trigger:hover, .loc-trigger.open {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(212,168,67,0.08);
+    }
+    .loc-trigger .loc-chevron {
+      display: none; /* chevron is positioned via .loc-wrap */
+    }
+    .loc-wrap .loc-chevron {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      transition: transform 0.2s;
+      pointer-events: none;
+    }
+    .loc-trigger.open + .loc-chevron { transform: translateY(-50%) rotate(180deg); }
+
+    .loc-options {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0; right: 0;
+      background: #13131b;
+      border: 1px solid var(--border-bright);
+      border-radius: var(--radius-sm);
+      max-height: 280px;
+      overflow-y: auto;
+      z-index: 200;
+      display: none;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    }
+    .loc-options.open { display: block; }
+    .loc-options::-webkit-scrollbar { width: 4px; }
+    .loc-options::-webkit-scrollbar-track { background: transparent; }
+    .loc-options::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+
+    .loc-item {
+      padding: 11px 16px;
+      cursor: pointer;
+      transition: background 0.15s;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .loc-item:last-child { border-bottom: none; }
+    .loc-item:hover { background: rgba(212,168,67,0.06); }
+    .loc-item.selected { background: rgba(212,168,67,0.1); }
+
+    .loc-item-name {
+      font-size: 13px;
+      color: var(--text);
+      transition: color 0.15s;
+    }
+    .loc-item:hover .loc-item-name,
+    .loc-item.selected .loc-item-name { color: var(--gold-light); }
+
+    .loc-item-addr {
+      font-size: 10px;
+      color: var(--text-dim);
+      margin-top: 2px;
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: max-height 0.22s ease, opacity 0.18s ease;
+      line-height: 1.5;
+      letter-spacing: 0;
+    }
+    .loc-item:hover .loc-item-addr {
+      max-height: 36px;
+      opacity: 1;
+    }
   </style>
 </head>
 
@@ -642,10 +731,20 @@
       <div class="card fade-up">
         <div class="card-title">Location & Date</div>
         <div class="field">
-          <label class="field-label" for="location">Centre</label>
-          <select class="field-input" id="location">
-            <option value="">Loading locations…</option>
-          </select>
+          <label class="field-label" for="loc-trigger">Centre</label>
+          <!-- Hidden input keeps the selected key; existing JS reads this -->
+          <input type="hidden" id="location" value="kolathur" />
+          <div class="loc-wrap">
+            <div class="loc-trigger" id="loc-trigger" tabindex="0" role="combobox"
+                 aria-haspopup="listbox" aria-expanded="false">
+              <span id="loc-label">Loading locations…</span>
+            </div>
+            <svg class="loc-chevron" width="12" height="12" viewBox="0 0 24 24"
+                 fill="none" stroke="#d4a843" stroke-width="2">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+            <div class="loc-options" id="loc-options" role="listbox"></div>
+          </div>
         </div>
         <div class="field">
           <label class="field-label" for="date">Dates</label>
@@ -717,23 +816,72 @@
     let userName = '';
     let userPhone = '';
 
-    // ─── Load locations from backend ────────────────────────────────
+    // ─── Custom location dropdown ────────────────────────────────────
     (async function loadLocations() {
-      const sel = document.getElementById('location');
+      const hiddenInput  = document.getElementById('location');
+      const trigger      = document.getElementById('loc-trigger');
+      const labelEl      = document.getElementById('loc-label');
+      const optionsList  = document.getElementById('loc-options');
+
+      let locs = [];
       try {
         const resp = await fetch(`${BACKEND}/locations`);
-        const locs = await resp.json();
-        sel.innerHTML = '';
-        locs.forEach((loc, i) => {
-          const opt = document.createElement('option');
-          opt.value = loc.key;
-          opt.textContent = loc.label;
-          if (i === 0) opt.selected = true;
-          sel.appendChild(opt);
-        });
-      } catch (e) {
-        sel.innerHTML = '<option value="kolathur">Kolathur</option><option value="periyar_nagar">Periyar Nagar</option><option value="jawahar_nagar">Jawahar Nagar</option>';
+        locs = await resp.json();
+      } catch (_) {
+        locs = [
+          { key: 'kolathur',      label: 'Kolathur',      address: '' },
+          { key: 'periyar_nagar', label: 'Periyar Nagar', address: '' },
+          { key: 'jawahar_nagar', label: 'Jawahar Nagar', address: '' },
+        ];
       }
+
+      function selectLoc(key, label, skipHighlight) {
+        hiddenInput.value = key;
+        labelEl.textContent = label;
+        if (!skipHighlight) {
+          optionsList.querySelectorAll('.loc-item').forEach(el =>
+            el.classList.toggle('selected', el.dataset.key === key)
+          );
+        }
+      }
+
+      function openDrop() {
+        optionsList.classList.add('open');
+        trigger.classList.add('open');
+        trigger.setAttribute('aria-expanded', 'true');
+      }
+      function closeDrop() {
+        optionsList.classList.remove('open');
+        trigger.classList.remove('open');
+        trigger.setAttribute('aria-expanded', 'false');
+      }
+
+      // Build items
+      locs.forEach((loc, i) => {
+        const item = document.createElement('div');
+        item.className = 'loc-item' + (i === 0 ? ' selected' : '');
+        item.dataset.key = loc.key;
+        item.setAttribute('role', 'option');
+        item.innerHTML =
+          `<div class="loc-item-name">${loc.label}</div>` +
+          (loc.address ? `<div class="loc-item-addr">📍 ${loc.address}</div>` : '');
+        item.addEventListener('click', () => {
+          selectLoc(loc.key, loc.label);
+          closeDrop();
+        });
+        optionsList.appendChild(item);
+      });
+
+      // Default to first location
+      if (locs.length > 0) selectLoc(locs[0].key, locs[0].label, true);
+
+      trigger.addEventListener('click', () =>
+        optionsList.classList.contains('open') ? closeDrop() : openDrop()
+      );
+      // Close on outside click
+      document.addEventListener('click', e => {
+        if (!trigger.closest('.loc-wrap').contains(e.target)) closeDrop();
+      });
     })();
 
     // ─── Initialize Flatpickr for multiple dates ────────────────────
