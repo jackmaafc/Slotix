@@ -1085,6 +1085,7 @@
       // Confirmed (GCC returned a booking_id)
       if (st === 'confirmed') {
         card.className = 'qr-card fade-up paid';
+        const isPlaceholder = slot.booking_id === 'SUCCESS';
         const gccLink = `https://gccservices.in/muthalvarpadaippagam/bookingQRCode?booking_id=${slot.booking_id}`;
         card.innerHTML = `
         <div class="qr-card-head">
@@ -1096,9 +1097,9 @@
             <svg viewBox="0 0 24 24"><polyline points="6 13 10 17 18 7"/></svg>
           </div>
           <div class="paid-label">Booking Confirmed!</div>
-          <a href="${gccLink}" target="_blank" rel="noopener"
+          ${!isPlaceholder ? `<a href="${gccLink}" target="_blank" rel="noopener"
              style="display:inline-block;margin-top:12px;padding:8px 20px;background:rgba(62,207,142,0.12);border:1px solid rgba(62,207,142,0.3);border-radius:8px;color:var(--green);font-size:11px;text-decoration:none;letter-spacing:1px;"
-          >View GCC QR &amp; Confirmation ↗</a>
+          >View GCC QR &amp; Confirmation ↗</a>` : `<div style="font-size:10px;color:var(--text-dim);margin-top:8px">Details sent via WhatsApp</div>`}
         </div>`;
         return;
       }

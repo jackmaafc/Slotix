@@ -118,7 +118,7 @@ def booking_flow(session_id, slot_key, location, date, name, phone, num_seats, r
             # Normalise GCC's vague errors into user-facing messages
             raw_lower = raw_msg.lower()
             if any(k in raw_lower for k in ("slot full", "seat", "capacity", "no seats", "not available", "full")):
-                user_msg = "Slot Full — no seats available for this date/time."
+                user_msg = "SLOTS FULL"
             elif "internal server error" in raw_lower or "exception" in raw_lower:
                 user_msg = "GCC server error — try a different date or slot."
             else:
@@ -300,10 +300,17 @@ def confirm_payment(session_id, slot_id):
             except Exception:
                 gcc_data = gcc_resp.text.strip()
 
-            if gcc_data and gcc_data != "error":
+            if isinstance(gcc_data, dict):
+                # If it's JSON, look for common success indicators
+                if gcc_data.get("status") == "SUCCESS" or "id" in gcc_data:
+                    booking_id = str(gcc_data.get("id") or gcc_data.get("tempBookId") or "SUCCESS")
+                else:
+                    gcc_error = gcc_data.get("message") or gcc_data.get("error") or "GCC returned an error on confirmation."
+            elif gcc_data and str(gcc_data).lower() != "error":
+                # If it's a plain string (like a booking ID)
                 booking_id = str(gcc_data)
             else:
-                gcc_error = "GCC returned an error on confirmation — check GCC account."
+                gcc_error = "GCC returned 'error' on confirmation — check GCC account."
 
         except Exception as e:
             gcc_error = f"GCC Confirm call failed: {e}"
