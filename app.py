@@ -13,8 +13,8 @@ CORS(app)
 LOCATIONS = {
     "kolathur":      {"buildId": 1,  "catId": 1,  "subId": 1,  "label": "Kolathur",      "address": "Jeganathan Street, Agaram, Chennai\u00a0600082"},
     "periyar_nagar": {"buildId": 2,  "catId": 4,  "subId": 8,  "label": "Periyar Nagar", "address": "Karthikeyan Road, Periyar Nagar, Chennai\u00a0600082"},
-    "jawahar_nagar": {"buildId": 4,  "catId": 7,  "subId": 13, "label": "Jawahar Nagar", "address": "1/26 First Circular Road, Jawahar Nagar, Chennai\u00a0600082"},
     "kondithope":    {"buildId": 3,  "catId": 5,  "subId": 9,  "label": "Kondithope",    "address": "4/27, Peddanaickenpet, Amman Kovil Street, George Town, Chennai"},
+    "jawahar_nagar": {"buildId": 4,  "catId": 7,  "subId": 13, "label": "Jawahar Nagar", "address": "1/26 First Circular Road, Jawahar Nagar, Chennai\u00a0600082"},
     "erukenchery":   {"buildId": 5,  "catId": 8,  "subId": 14, "label": "Erukenchery",   "address": "No.45, Krishnamurthy Salai, Chennai\u00a0600118"},
     "sevenwells":    {"buildId": 6,  "catId": 9,  "subId": 15, "label": "Sevenwells",    "address": "Branch Library, Shanmugam Street, Sevenwells Salai, Chennai\u00a0600001"},
     "tondiarpet":    {"buildId": 7,  "catId": 10, "subId": 16, "label": "Tondiarpet",    "address": "Mayor Basudev Street No.38, Old Washermenpet, Chennai\u00a0600021"},
