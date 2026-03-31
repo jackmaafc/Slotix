@@ -117,7 +117,7 @@ def booking_flow(session_id, slot_key, location, date, name, phone, num_seats, r
             raw_msg = rjson.get("message") or rjson.get("error") or str(rjson)
             # Normalise GCC's vague errors into user-facing messages
             raw_lower = raw_msg.lower()
-            if any(k in raw_lower for k in ("slot full", "seat", "capacity", "no seats", "not available", "full")):
+            if any(k in raw_lower for k in ("slot full", "seat", "capacity", "no seats", "not available", "not av", "full", "avail", "limit")):
                 user_msg = "SLOTS FULL"
             elif "internal server error" in raw_lower or "exception" in raw_lower:
                 user_msg = "GCC server error — try a different date or slot."
