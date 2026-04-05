@@ -164,6 +164,16 @@ def booking_flow(session_id, slot_key, location, date, name, phone, num_seats, r
 
 # ─── Routes ───────────────────────────────────────────────────────────────────
 
+@app.route("/")
+def home():
+    return "Slotix API running"
+
+
+@app.route("/test")
+def test():
+    return jsonify({"status": "working"})
+
+
 @app.route("/health", methods=["GET"])
 def health():
     return jsonify({"status": "ok"})
